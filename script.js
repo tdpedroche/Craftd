@@ -198,10 +198,14 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
           body: JSON.stringify({
             email,
             goal: answers.goal || null,
+            role: answers.role || null,
             pain: answers.pain || null,
+            time_drain: answers['time-drain'] || null,
             experience: answers.experience || null,
-            time: answers.time || null,
+            tried: answers.tried || null,
             usecase: answers.usecase || null,
+            time: answers.time || null,
+            success: answers.success || null,
           }),
         });
 

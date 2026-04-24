@@ -25,8 +25,9 @@ def init_db():
         CREATE TABLE IF NOT EXISTS leads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL,
-            goal TEXT, pain TEXT, experience TEXT,
-            time_available TEXT, usecase TEXT,
+            goal TEXT, role TEXT, pain TEXT, time_drain TEXT,
+            experience TEXT, tried TEXT, usecase TEXT,
+            time_available TEXT, success_vision TEXT,
             playbook TEXT, stripe_session TEXT UNIQUE,
             checkout_url TEXT, paid INTEGER DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -36,66 +37,116 @@ def init_db():
     db.close()
 
 GOAL_LABELS = {
-    "make-money": "make money or grow their income",
-    "save-time":  "save time at work or home",
-    "learn-skills": "learn new skills and grow professionally",
-    "daily-life": "simplify their everyday life",
+    "make-money":    "make money or grow their income",
+    "save-time":     "save time at work or home",
+    "learn-skills":  "learn new skills and get ahead professionally",
+    "daily-life":    "simplify their everyday life",
+}
+ROLE_LABELS = {
+    "employee":         "a full-time employee with a 9-to-5 job",
+    "freelancer":       "a freelancer or self-employed professional",
+    "business-owner":   "a business owner or entrepreneur",
+    "student":          "a student or recent graduate",
+    "parent-homemaker": "a stay-at-home parent or homemaker",
 }
 PAIN_LABELS = {
     "overwhelmed": "feels overwhelmed and doesn't know where to start with AI",
-    "no-time":     "doesn't have enough time to get everything done",
-    "stuck":       "feels stuck and isn't making progress toward their goals",
-    "results":     "isn't seeing results from what they're already trying",
+    "no-time":     "never has enough time to get everything done",
+    "stuck":       "feels stuck and can't make real progress toward their goals",
+    "results":     "is putting in effort but not seeing results",
+}
+TIME_DRAIN_LABELS = {
+    "emails-messages":   "emails and messages",
+    "research-planning": "research, planning, and decision-making",
+    "content-writing":   "writing content, posts, or documents",
+    "admin-tasks":       "repetitive admin and organizational tasks",
 }
 EXP_LABELS = {
     "none":    "a total beginner who has barely used any AI tools",
     "little":  "a beginner who has tried ChatGPT a couple of times",
     "some":    "has some experience and uses AI occasionally but not consistently",
-    "regular": "a regular user who uses AI tools a few times a week",
+    "regular": "a regular user who uses AI tools several times a week",
+}
+TRIED_LABELS = {
+    "nothing":        "has never tried AI at all",
+    "basic-questions": "has asked AI basic questions or had a conversation",
+    "work-tasks":     "has used AI for a work task or project",
+    "multiple-tools": "has tried multiple different AI tools or apps",
+}
+USECASE_LABELS = {
+    "writing":  "writing, emails, content creation, and communication",
+    "business": "business planning, strategy, and analysis",
+    "creative": "creative projects, art, music, and design",
+    "personal": "personal habits, health, learning, and life admin",
 }
 TIME_LABELS = {
     "5-10":  "5-10 minutes", "15-30": "15-30 minutes",
     "30-60": "30-60 minutes", "60+":   "more than an hour",
 }
-USECASE_LABELS = {
-    "writing":  "writing, emails, content creation, and communication",
-    "business": "business planning, strategy, and analysis",
-    "creative": "creative projects, art, music, and ideas",
-    "personal": "personal habits, health, learning, and life admin",
+SUCCESS_LABELS = {
+    "save-10hrs":     "saving 10+ hours a month on tasks they hate",
+    "earn-more":      "earning more money or landing better opportunities",
+    "feel-confident": "feeling confident and ahead of the people around them",
+    "less-stress":    "having less stress, more focus, and a better work-life balance",
 }
 
 def build_prompt(answers):
     goal    = GOAL_LABELS.get(answers.get("goal",""), answers.get("goal",""))
+    role    = ROLE_LABELS.get(answers.get("role",""), answers.get("role",""))
     pain    = PAIN_LABELS.get(answers.get("pain",""), answers.get("pain",""))
+    drain   = TIME_DRAIN_LABELS.get(answers.get("time_drain",""), answers.get("time_drain",""))
     exp     = EXP_LABELS.get(answers.get("experience",""), answers.get("experience",""))
-    time_av = TIME_LABELS.get(answers.get("time",""), answers.get("time",""))
+    tried   = TRIED_LABELS.get(answers.get("tried",""), answers.get("tried",""))
     usecase = USECASE_LABELS.get(answers.get("usecase",""), answers.get("usecase",""))
+    time_av = TIME_LABELS.get(answers.get("time",""), answers.get("time",""))
+    success = SUCCESS_LABELS.get(answers.get("success",""), answers.get("success",""))
     return (
-        "You are Craftd, an AI tool that creates personalized AI playbooks for everyday people.\n\n"
-        "Generate a complete, highly personalized AI playbook for someone with this profile:\n"
+        "You are Craftd, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
+        "Generate a complete, highly personalized AI playbook for someone with this exact profile:\n"
+        "- Life situation: They are " + role + "\n"
         "- Main goal: They want to " + goal + "\n"
         "- Biggest pain point: This person " + pain + "\n"
+        "- Biggest time drain: " + drain + "\n"
         "- AI experience level: They are " + exp + "\n"
+        "- What they've already tried: This person " + tried + "\n"
+        "- Primary use area: " + usecase + "\n"
         "- Time available daily: " + time_av + " per day\n"
-        "- Primary use area: " + usecase + "\n\n"
-        "Write a warm, encouraging, beginner-friendly playbook with these exact sections:\n\n"
+        "- 90-day success vision: They want to end up " + success + "\n\n"
+        "Write a warm, encouraging, beginner-friendly playbook with these EXACT sections. "
+        "Make every single section deeply specific to this person's role, goal, and situation — "
+        "not generic advice. Use their exact context throughout.\n\n"
         "# Your Personal AI Playbook\n\n"
         "## How AI Fits Into Your Life\n"
-        "[2-3 sentences, personal and immediately relevant]\n\n"
+        "3-4 sentences written directly to this person. Reference their specific role and goal. "
+        "Make them feel like this was written just for them.\n\n"
+        "## Your Recommended AI Tools\n"
+        "List 3-4 specific free AI tools that are perfect for their use case and experience level. "
+        "For each tool: name, one sentence on what it does, and exactly how this person should use it. "
+        "Format: **Tool Name** — what it does. How to use it for [their specific situation].\n\n"
         "## Your Daily AI Workflow\n"
-        "[3-5 numbered steps, concrete and specific, name the actual tool]\n\n"
-        "## Your Copy-Paste Prompts\n"
-        "[5 prompts formatted as:\n"
-        "**Prompt N: Title**\n"
-        "[Full prompt with [brackets] for fill-ins]\n"
-        "*When to use: one sentence*]\n\n"
+        "5-6 numbered steps, completely specific to their role and time available. "
+        "Name the actual tool for each step. Make it feel like a real daily routine.\n\n"
+        "## Your 15 Copy-Paste Prompts\n"
+        "Write exactly 15 prompts, all tailored to their use case and goal. "
+        "Format each as:\n"
+        "**Prompt N: [Descriptive Title]**\n"
+        "[The full prompt with [BRACKETS] for parts they fill in]\n"
+        "*Best for: one specific sentence about when to use this*\n\n"
         "## Real Output Examples\n"
-        "[2 before/after examples. Label: \"You type:\" and \"AI produces:\"]\n\n"
-        "## Your Week-One Action Plan\n"
-        "[Mon-Fri, one task per day under 10 min, use checkboxes]\n\n"
+        "3 before/after examples that are hyper-specific to their situation. "
+        "Label clearly: **You type:** and **AI produces:** Show realistic, useful output.\n\n"
+        "## What to Avoid (Beginner Mistakes)\n"
+        "4-5 specific mistakes that are common for someone in their exact situation. "
+        "Be direct and practical — tell them what goes wrong and how to fix it.\n\n"
+        "## Your 30-Day Action Plan\n"
+        "Break it into 4 weeks. Each week has a theme and 5 daily tasks (Mon-Fri). "
+        "Tasks should be under 15 min each, use checkboxes, and build on each other progressively. "
+        "Week 1 = foundations, Week 2 = building habits, Week 3 = going deeper, Week 4 = mastery.\n\n"
         "## Your Biggest Shortcut\n"
-        "[1 paragraph of direct, specific advice]\n\n"
-        "Keep under 800 words. Use \"you\" throughout. No jargon. Every section immediately actionable."
+        "1-2 paragraphs of the single most powerful insight for this specific person. "
+        "Based on their role, goal, and 90-day vision — what's the one thing that will make the biggest difference?\n\n"
+        "Aim for 1200-1500 words total. Use 'you' throughout. Zero jargon. "
+        "Every section must feel like it was written specifically for this person, not copy-pasted from a template."
     )
 
 def generate_and_save(lead_id, answers, email):
@@ -114,7 +165,7 @@ def generate_and_save(lead_id, answers, email):
         client = Anthropic(api_key=anthropic_api_key)
         message = client.messages.create(
             model="claude-sonnet-4-5",
-            max_tokens=1500,
+            max_tokens=4000,
             messages=[{"role": "user", "content": build_prompt(answers)}],
         )
         playbook_text = message.content[0].text
@@ -176,23 +227,28 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 class SubmitRequest(BaseModel):
     email: str
     goal: Optional[str] = None
+    role: Optional[str] = None
     pain: Optional[str] = None
+    time_drain: Optional[str] = None
     experience: Optional[str] = None
-    time: Optional[str] = None
+    tried: Optional[str] = None
     usecase: Optional[str] = None
+    time: Optional[str] = None
+    success: Optional[str] = None
 
 @app.post("/api/submit")
 async def submit(body: SubmitRequest):
     db = get_db()
     cursor = db.execute(
-        "INSERT INTO leads (email, goal, pain, experience, time_available, usecase) VALUES (?,?,?,?,?,?)",
-        (body.email, body.goal, body.pain, body.experience, body.time, body.usecase),
+        "INSERT INTO leads (email, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        (body.email, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
     )
     lead_id = cursor.lastrowid
     db.commit()
     db.close()
-    answers = {"goal": body.goal, "pain": body.pain, "experience": body.experience,
-               "time": body.time, "usecase": body.usecase}
+    answers = {"goal": body.goal, "role": body.role, "pain": body.pain, "time_drain": body.time_drain,
+               "experience": body.experience, "tried": body.tried, "usecase": body.usecase,
+               "time": body.time, "success": body.success}
     threading.Thread(target=generate_and_save, args=(lead_id, answers, body.email), daemon=True).start()
     return {"pending_id": lead_id}
 
