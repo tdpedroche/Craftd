@@ -165,7 +165,7 @@ def generate_and_save(lead_id, answers, email):
         client = Anthropic(api_key=anthropic_api_key)
         message = client.messages.create(
             model="claude-sonnet-4-5",
-            max_tokens=4000,
+            max_tokens=8000,
             messages=[{"role": "user", "content": build_prompt(answers)}],
         )
         playbook_text = message.content[0].text
