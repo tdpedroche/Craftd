@@ -126,7 +126,7 @@ def generate_and_save(lead_id, answers, email):
         playbook_text = message.content[0].text
 
         if STRIPE_SECRET_KEY and STRIPE_PRICE_ID:
-            base = BASE_URL.rstrip('/')
+            base = os.environ.get("BASE_URL", "https://craftd.onrender.com").rstrip('/')
             success_url = base + '/playbook.html?session_id={CHECKOUT_SESSION_ID}'
             cancel_url  = base + '/#quiz'
             session = stripe.checkout.Session.create(
