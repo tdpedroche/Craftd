@@ -127,8 +127,11 @@ def generate_and_save(lead_id, answers, email):
 
         if STRIPE_SECRET_KEY and STRIPE_PRICE_ID:
             base = os.environ.get("BASE_URL", "https://craftd.onrender.com").rstrip('/')
-            success_url = base + '/playbook.html?session_id={CHECKOUT_SESSION_ID}'
+            success_url = base + "/playbook.html?session_id=" + "{CHECKOUT_SESSION_ID}"
             cancel_url  = base + '/#quiz'
+            print(f"DEBUG success_url: {success_url}", flush=True)
+            print(f"DEBUG cancel_url: {cancel_url}", flush=True)
+            print(f"DEBUG price_id: {STRIPE_PRICE_ID}", flush=True)
             session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
                 line_items=[{"price": STRIPE_PRICE_ID, "quantity": 1}],
