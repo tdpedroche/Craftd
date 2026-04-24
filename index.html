@@ -584,5 +584,16 @@
   </footer>
 
   <script src="script.js?v=10"></script>
+  <script>
+    // Show "Return to my playbook" banner if they've already paid
+    (function() {
+      const sid = localStorage.getItem('craftd_session_id');
+      if (!sid) return;
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:var(--color-primary);color:white;padding:12px 24px;border-radius:100px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.2);display:flex;align-items:center;gap:12px;white-space:nowrap;';
+      banner.innerHTML = '📖 You have a playbook — <a href="/playbook.html?session_id=' + sid + '" style="color:white;text-decoration:underline;margin-left:4px;">View it here</a>';
+      document.body.appendChild(banner);
+    })();
+  </script>
 </body>
 </html>

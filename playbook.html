@@ -395,10 +395,18 @@
     // ---- LOAD PLAYBOOK ----
     async function loadPlaybook() {
       const params = new URLSearchParams(location.search);
-      const sessionId = params.get('session_id');
+      let sessionId = params.get('session_id');
+
+      // If session_id in URL, save it so they can return later
+      if (sessionId) {
+        localStorage.setItem('craftd_session_id', sessionId);
+      } else {
+        // Try to recover from localStorage
+        sessionId = localStorage.getItem('craftd_session_id');
+      }
 
       if (!sessionId) {
-        showError('No session ID found. Please check your link or return to Craftd.');
+        showError('No session ID found. Please check your email for your playbook link or return to Craftd.');
         return;
       }
 
