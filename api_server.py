@@ -43,7 +43,7 @@ def init_db():
     db.commit()
     db.close()
 
-anthropic_client = Anthropic()
+anthropic_client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
 
 GOAL_LABELS = {
     "make-money": "make money or grow their income",
