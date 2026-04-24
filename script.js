@@ -75,7 +75,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
 // ---- QUIZ ----
 (function () {
-  const TOTAL_STEPS = 5;
+  const TOTAL_STEPS = 10;
   let currentStep = 1;
   const answers = {};
 
