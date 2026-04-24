@@ -130,7 +130,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
     const pct = (step / TOTAL_STEPS) * 100;
     progressBar.style.width = pct + '%';
-    stepLabel.textContent = `Question ${step} of ${TOTAL_STEPS}`;
+    stepLabel.textContent = 'Question ' + step + ' of ' + TOTAL_STEPS;
     updateDots(step - 1);
 
     backBtn.style.visibility = step > 1 ? 'visible' : 'hidden';
@@ -159,7 +159,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
           currentStep++;
           showStep(currentStep);
         } else {
-          // All 5 questions done — show email capture
+          // All 10 questions done — show email capture
           showStep('email');
         }
       }, 350);
@@ -206,6 +206,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
             usecase: answers.usecase || null,
             time: answers.time || null,
             success: answers.success || null,
+            learning_style: answers['learning-style'] || null,
           }),
         });
 
