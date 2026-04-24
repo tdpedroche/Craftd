@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Craftd — Your Personal AI Playbook</title>
+  <meta name="description" content="Craftd creates a personalized AI playbook based on your goals, lifestyle, and experience level. Stop guessing — start using AI today." />
+  <meta property="og:title" content="Craftd — Your Personal AI Playbook" />
+  <meta property="og:description" content="A simple, step-by-step system to use AI in your real life. Built around you." />
+  <meta property="og:type" content="website" />
+
+  <!-- Fonts: Chillax (display) + General Sans (body) from Fontshare -->
+  <link href="https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,600,700&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ======= NAV ======= -->
+  <header class="nav" id="nav">
+    <div class="nav-inner container">
+      <a href="#" class="logo" aria-label="Craftd home">
+        <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <rect x="2" y="2" width="12" height="12" rx="3" fill="var(--color-primary)"/>
+          <rect x="18" y="2" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
+          <rect x="2" y="18" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
+          <rect x="18" y="18" width="12" height="12" rx="3" fill="var(--color-accent)"/>
+        </svg>
+        <span class="logo-text">Craftd</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#playbook">Playbook</a>
+        <a href="#quiz">Take the Quiz</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="#quiz" class="btn btn-primary btn-sm">Get My Playbook</a>
+      </div>
+      <button class="nav-mobile-toggle" aria-label="Open menu" id="mobile-menu-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="nav-mobile-drawer" id="mobile-drawer">
+      <a href="#how-it-works" class="mobile-link">How It Works</a>
+      <a href="#playbook" class="mobile-link">Playbook</a>
+      <a href="#quiz" class="mobile-link">Take the Quiz</a>
+      <a href="#quiz" class="btn btn-primary" style="margin-top: var(--space-2);">Get My Playbook</a>
+    </div>
+  </header>
+
+  <!-- ======= HERO ======= -->
+  <section class="hero" id="hero">
+    <div class="container hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <span class="badge-dot"></span>
+          Personalized AI in minutes
+        </div>
+        <h1 class="hero-title reveal reveal-delay-1">
+          Your personal AI<br/>playbook,<br/><em>built around your life.</em>
+        </h1>
+        <p class="hero-sub reveal reveal-delay-2">
+          Answer 5 quick questions. Get a clear, step-by-step system for using AI in your work, money, or daily life — starting today. No tech background needed.
+        </p>
+        <div class="hero-cta reveal reveal-delay-3">
+          <a href="#quiz" class="btn btn-primary btn-lg">Build My Free Playbook →</a>
+          <p class="hero-cta-note">Takes 2 minutes. 100% free.</p>
+        </div>
+      </div>
+      <div class="hero-visual reveal reveal-delay-4">
+        <div class="playbook-preview">
+          <div class="playbook-header">
+            <div class="playbook-avatar">S</div>
+            <div>
+              <div class="playbook-name">Sarah's AI Playbook</div>
+              <div class="playbook-label">Side Hustler · Beginner · 30 min/day</div>
+            </div>
+          </div>
+          <div class="playbook-body">
+            <div class="playbook-row">
+              <span class="check-icon">✓</span>
+              <div>
+                <div class="playbook-row-title">Daily AI workflow</div>
+                <div class="playbook-row-sub">Morning content batch · Client emails · Product descriptions</div>
+              </div>
+            </div>
+            <div class="playbook-row">
+              <span class="check-icon">✓</span>
+              <div>
+                <div class="playbook-row-title">12 copy-paste prompts</div>
+                <div class="playbook-row-sub">Ready to use right now — no guessing</div>
+              </div>
+            </div>
+            <div class="playbook-row">
+              <span class="check-icon">✓</span>
+              <div>
+                <div class="playbook-row-title">Real output examples</div>
+                <div class="playbook-row-sub">See exactly what AI can produce for you</div>
+              </div>
+            </div>
+            <div class="playbook-action">
+              <span>View My Full Playbook</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-scroll-hint" aria-hidden="true">
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- ======= PROBLEM / BRIDGE ======= -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="problem-statement reveal">
+        <p class="problem-quote">
+          "Most people know AI is powerful.<br/>They just don't know where to <em>start.</em>"
+        </p>
+      </div>
+      <div class="problem-grid">
+        <div class="problem-card reveal">
+          <div class="problem-icon">😰</div>
+          <h3>Overwhelmed by the options</h3>
+          <p>ChatGPT, Claude, Gemini, Copilot — it's impossible to know which tool is right for you, or even how to begin.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-1">
+          <div class="problem-icon">🎯</div>
+          <h3>Generic advice doesn't work</h3>
+          <p>YouTube tutorials and blog posts are written for everyone, which means they're designed for no one. You need a plan that fits your actual life.</p>
+        </div>
+        <div class="problem-card reveal reveal-delay-2">
+          <div class="problem-icon">⏳</div>
+          <h3>No time to figure it out alone</h3>
+          <p>You have goals, a schedule, and real things to do. You don't have weeks to experiment and learn from scratch.</p>
+        </div>
+      </div>
+      <div class="bridge reveal">
+        <div class="bridge-arrow">↓</div>
+        <p class="bridge-text">Craftd bridges the gap — from <strong>"I don't understand AI"</strong> to <strong>"I have a system I can actually use."</strong></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= HOW IT WORKS ======= -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-label reveal">The Process</div>
+      <h2 class="section-title reveal">Three steps to your playbook</h2>
+      <div class="steps-grid">
+        <div class="step reveal">
+          <div class="step-number">01</div>
+          <div class="step-content">
+            <h3>Answer 5 quick questions</h3>
+            <p>Tell us your goals, how much time you have, what you want to achieve, and your comfort level with AI. No tech knowledge required.</p>
+          </div>
+          <div class="step-visual step-visual-1">
+            <div class="step-pill">What's your main goal with AI?</div>
+            <div class="step-options">
+              <div class="step-option">Make more money</div>
+              <div class="step-option selected">Save time at work</div>
+              <div class="step-option">Learn new skills</div>
+            </div>
+          </div>
+        </div>
+        <div class="step step-reverse reveal">
+          <div class="step-number">02</div>
+          <div class="step-content">
+            <h3>We build your personal playbook</h3>
+            <p>Based on your answers, Craftd generates a tailored system — not a generic guide. Your workflow, your prompts, your timeline.</p>
+          </div>
+          <div class="step-visual step-visual-2">
+            <div class="generating-bar">
+              <div class="gen-line"></div>
+              <div class="gen-line gen-line-short"></div>
+              <div class="gen-line gen-line-mid"></div>
+            </div>
+            <div class="gen-label">Building your playbook…</div>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-number">03</div>
+          <div class="step-content">
+            <h3>Use it starting today</h3>
+            <p>Your playbook includes copy-paste prompts, a daily workflow, and real examples — so you can start immediately, not someday.</p>
+          </div>
+          <div class="step-visual step-visual-3">
+            <div class="today-card">
+              <div class="today-label">Today's AI task</div>
+              <div class="today-task">Draft 3 product descriptions using your prompt template</div>
+              <div class="today-time">⏱ Est. 8 minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= PLAYBOOK CONTENTS ======= -->
+  <section class="playbook-section" id="playbook">
+    <div class="container">
+      <div class="section-label reveal">What You Get</div>
+      <h2 class="section-title reveal">Everything inside your playbook</h2>
+      <p class="section-sub reveal">No fluff. No theory. Just the exact tools, prompts, and steps you need to start using AI in your real life.</p>
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon">🗺️</div>
+          <h3>A clear AI system for your life</h3>
+          <p>A plain-English explanation of exactly how AI fits into your specific situation — your job, your schedule, your goals.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">📋</div>
+          <h3>Your daily AI workflow</h3>
+          <p>A step-by-step routine you can follow every day. Know exactly when and how to use AI so it becomes second nature.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">📝</div>
+          <h3>Copy-paste prompts</h3>
+          <p>Pre-written prompts tailored to your goals. Open your AI tool, paste, and go. Zero experience needed.</p>
+          <div class="feature-prompt">
+            <span class="prompt-label">Example prompt</span>
+            <p class="prompt-text">"Write a professional follow-up email for [client] after our meeting about [topic]. Tone: warm but concise."</p>
+          </div>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon">💡</div>
+          <h3>Real output examples</h3>
+          <p>See exactly what the AI will produce for you before you even try. No surprises, no learning curve.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon">🚀</div>
+          <h3>Beginner-friendly action plan</h3>
+          <p>A week-one plan that eases you in — so you build confidence without feeling overwhelmed or lost.</p>
+        </div>
+        <div class="feature-card feature-card-highlight reveal reveal-delay-3">
+          <div class="feature-icon">🎯</div>
+          <h3>100% built for you</h3>
+          <p>Not a template. Not a generic guide. A playbook written around your specific answers, goals, and lifestyle.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= WHO IT'S FOR ======= -->
+  <section class="who" id="who">
+    <div class="container">
+      <div class="section-label reveal">Who It's For</div>
+      <h2 class="section-title reveal">Built for people who want results, not lectures</h2>
+      <div class="personas-grid">
+        <div class="persona reveal">
+          <div class="persona-emoji">💼</div>
+          <h3>The Busy Professional</h3>
+          <p>You want to use AI to save hours at work — drafting emails, summarizing documents, prepping for meetings — without spending days learning how.</p>
+          <div class="persona-tag">Save time</div>
+        </div>
+        <div class="persona reveal reveal-delay-1">
+          <div class="persona-emoji">💰</div>
+          <h3>The Side Hustler</h3>
+          <p>You're building something on the side and want AI to help you create content, write copy, and get more done with the hours you have.</p>
+          <div class="persona-tag">Make money</div>
+        </div>
+        <div class="persona reveal reveal-delay-2">
+          <div class="persona-emoji">🎓</div>
+          <h3>The Career Starter</h3>
+          <p>You just started your career and want to get ahead of colleagues by learning how to use AI as a secret weapon at work.</p>
+          <div class="persona-tag">Get ahead</div>
+        </div>
+        <div class="persona reveal reveal-delay-3">
+          <div class="persona-emoji">🏡</div>
+          <h3>The Everyday Person</h3>
+          <p>You've heard about AI and want to see how it can actually help you in real life — planning, writing, learning, organizing. No jargon allowed.</p>
+          <div class="persona-tag">Real life</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= TESTIMONIALS ======= -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials-inner">
+        <blockquote class="testimonial reveal">
+          <p>"I've been putting off learning AI for a year. Craftd gave me a plan I actually understood. I used it the same day I got my playbook."</p>
+          <footer>
+            <strong>Marcus T.</strong>
+            <span>Sales manager, 34</span>
+          </footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-1">
+          <p>"The prompts alone were worth it. I stopped staring at a blank screen and just started copying and tweaking. It works."</p>
+          <footer>
+            <strong>Priya N.</strong>
+            <span>Freelance writer</span>
+          </footer>
+        </blockquote>
+        <blockquote class="testimonial reveal reveal-delay-2">
+          <p>"I'm not a tech person at all. This was the first time AI actually made sense for me. I saved 3 hours my first week."</p>
+          <footer>
+            <strong>Lisa M.</strong>
+            <span>Small business owner</span>
+          </footer>
+        </blockquote>
+      </div>
+      <div class="trust-bar reveal">
+        <div class="trust-stat">
+          <span class="trust-number">2 min</span>
+          <span class="trust-label">to complete the quiz</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-stat">
+          <span class="trust-number">100%</span>
+          <span class="trust-label">personalized to you</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-stat">
+          <span class="trust-number">$37</span>
+          <span class="trust-label">one-time payment</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= QUIZ ======= -->
+  <section class="quiz-section" id="quiz">
+    <div class="container">
+      <div class="section-label reveal">The Quiz</div>
+      <h2 class="section-title reveal">Let's build your playbook</h2>
+      <p class="section-sub reveal">5 questions. 2 minutes. Your personal AI system, ready to use.</p>
+
+      <div class="quiz-card reveal">
+        <!-- Progress bar -->
+        <div class="quiz-progress">
+          <div class="quiz-progress-bar" id="quiz-progress-bar"></div>
+        </div>
+        <div class="quiz-step-label" id="quiz-step-label">Question 1 of 5</div>
+
+        <!-- Quiz steps -->
+        <div class="quiz-steps" id="quiz-steps">
+
+          <!-- Step 1 -->
+          <div class="quiz-step active" data-step="1">
+            <h3 class="quiz-q">What's your main goal with AI?</h3>
+            <div class="quiz-options" data-name="goal">
+              <button class="quiz-option" data-value="make-money">💰 Make money or grow income</button>
+              <button class="quiz-option" data-value="save-time">⏱ Save time at work or home</button>
+              <button class="quiz-option" data-value="learn-skills">📚 Learn new skills and grow</button>
+              <button class="quiz-option" data-value="daily-life">🏡 Simplify my everyday life</button>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="quiz-step" data-step="2">
+            <h3 class="quiz-q">What's your biggest pain point right now?</h3>
+            <div class="quiz-options" data-name="pain">
+              <button class="quiz-option" data-value="overwhelmed">😰 I feel overwhelmed and don't know where to start</button>
+              <button class="quiz-option" data-value="no-time">⏳ I don't have enough time to get everything done</button>
+              <button class="quiz-option" data-value="stuck">🧱 I feel stuck or not making progress</button>
+              <button class="quiz-option" data-value="results">📊 I'm not seeing results from what I'm already trying</button>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="quiz-step" data-step="3">
+            <h3 class="quiz-q">How experienced are you with AI tools?</h3>
+            <div class="quiz-options" data-name="experience">
+              <button class="quiz-option" data-value="none">🌱 Total beginner — I've barely used any</button>
+              <button class="quiz-option" data-value="little">🔰 A little — I've tried ChatGPT a couple times</button>
+              <button class="quiz-option" data-value="some">🔁 Some — I use it occasionally but not consistently</button>
+              <button class="quiz-option" data-value="regular">⚡ Regular — I use AI tools a few times a week</button>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="quiz-step" data-step="4">
+            <h3 class="quiz-q">How much time can you give to AI each day?</h3>
+            <div class="quiz-options" data-name="time">
+              <button class="quiz-option" data-value="5-10">5–10 minutes</button>
+              <button class="quiz-option" data-value="15-30">15–30 minutes</button>
+              <button class="quiz-option" data-value="30-60">30–60 minutes</button>
+              <button class="quiz-option" data-value="60+">More than an hour</button>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="quiz-step" data-step="5">
+            <h3 class="quiz-q">Where do you most want AI to help?</h3>
+            <div class="quiz-options" data-name="usecase">
+              <button class="quiz-option" data-value="writing">✍️ Writing — emails, content, copy, messages</button>
+              <button class="quiz-option" data-value="business">🏢 Business — planning, strategy, analysis</button>
+              <button class="quiz-option" data-value="creative">🎨 Creative — ideas, projects, art, music</button>
+              <button class="quiz-option" data-value="personal">🌿 Personal — habits, health, learning, life admin</button>
+            </div>
+          </div>
+
+          <!-- Step: Email Capture -->
+          <div class="quiz-step" data-step="email">
+            <div class="email-step-icon">📬</div>
+            <h3 class="quiz-q">Where should we send your playbook?</h3>
+            <p class="email-step-sub">Enter your email and we'll build your personalized AI playbook — then you can unlock it for $37.</p>
+            <form id="quiz-email-form" class="email-form" novalidate>
+              <div class="email-input-wrap">
+                <input
+                  type="email"
+                  id="quiz-email-input"
+                  class="email-input"
+                  placeholder="your@email.com"
+                  required
+                  autocomplete="email"
+                  data-testid="input-email"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg email-submit-btn" data-testid="button-submit-email">
+                Build My Playbook →
+              </button>
+            </form>
+            <p class="email-step-note">🔒 No spam. Unsubscribe anytime. One-time $37 payment after your playbook is generated.</p>
+          </div>
+
+          <!-- Step: Generating -->
+          <div class="quiz-step" data-step="generating">
+            <div class="generating-state">
+              <div class="gen-spinner"></div>
+              <h3 class="gen-title">Building your playbook…</h3>
+              <p class="gen-sub">Our AI is creating a personalized system based on your answers. This takes about 10–15 seconds.</p>
+              <div class="gen-steps">
+                <div class="gen-step active" id="gen-step-1">✦ Analyzing your goals and pain points</div>
+                <div class="gen-step" id="gen-step-2">✦ Crafting your daily workflow</div>
+                <div class="gen-step" id="gen-step-3">✦ Writing your copy-paste prompts</div>
+                <div class="gen-step" id="gen-step-4">✦ Building your action plan</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step: Checkout (dev mode / after generation) -->
+          <div class="quiz-step" data-step="checkout">
+            <div class="checkout-state">
+              <div class="checkout-icon">🎉</div>
+              <h3 class="checkout-title">Your playbook is ready!</h3>
+              <p class="checkout-sub">We've built your personalized AI playbook. Unlock it now for a one-time payment of <strong>$37</strong>.</p>
+              <div class="checkout-what">
+                <div class="checkout-item">✓ Full personalized AI playbook</div>
+                <div class="checkout-item">✓ 5 copy-paste prompts tailored to you</div>
+                <div class="checkout-item">✓ Your daily AI workflow</div>
+                <div class="checkout-item">✓ Week-one action plan</div>
+              </div>
+              <a href="#" id="checkout-btn" class="btn btn-primary btn-lg checkout-cta" data-testid="button-checkout">
+                Unlock My Playbook — $37 →
+              </a>
+              <p class="checkout-note">Secure payment · Instant access · No subscription</p>
+            </div>
+          </div>
+
+          <!-- Step: Error -->
+          <div class="quiz-step" data-step="error">
+            <div class="error-state">
+              <div class="error-icon">⚠️</div>
+              <h3 class="error-title">Something went wrong</h3>
+              <p class="error-msg" id="quiz-error-msg">We couldn't generate your playbook. Please try again.</p>
+              <button class="btn btn-primary" onclick="location.reload()">Try Again</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="quiz-nav" id="quiz-nav">
+          <button class="quiz-btn-back" id="quiz-back" style="visibility:hidden">← Back</button>
+          <div class="quiz-dots" id="quiz-dots">
+            <span class="quiz-dot active"></span>
+            <span class="quiz-dot"></span>
+            <span class="quiz-dot"></span>
+            <span class="quiz-dot"></span>
+            <span class="quiz-dot"></span>
+          </div>
+          <div style="width:64px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FINAL CTA ======= -->
+  <section class="final-cta">
+    <div class="container">
+      <div class="final-cta-inner reveal">
+        <h2>You don't need to figure out AI alone.</h2>
+        <p>Get a clear system built around your life — in the next 2 minutes.</p>
+        <a href="#quiz" class="btn btn-primary btn-lg">Build My Free Playbook →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= FOOTER ======= -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="#" class="logo" aria-label="Craftd home">
+          <svg class="logo-mark" width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect x="2" y="2" width="12" height="12" rx="3" fill="var(--color-primary)"/>
+            <rect x="18" y="2" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
+            <rect x="2" y="18" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
+            <rect x="18" y="18" width="12" height="12" rx="3" fill="var(--color-accent)"/>
+          </svg>
+          <span class="logo-text">Craftd</span>
+        </a>
+        <p class="footer-tagline">Your personal AI playbook, built around your life.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#how-it-works">How It Works</a>
+        <a href="#playbook">Playbook</a>
+        <a href="#quiz">Get Started</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>© 2026 Craftd. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
