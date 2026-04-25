@@ -184,6 +184,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     emailForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const emailInput = document.getElementById('quiz-email-input');
+      const nameInput  = document.getElementById('quiz-name');
+      const firstName  = nameInput ? nameInput.value.trim() : '';
       const email = emailInput.value.trim();
       if (!email) return;
 
@@ -197,6 +199,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             email,
+            first_name: firstName || null,
             goal: answers.goal || null,
             role: answers.role || null,
             pain: answers.pain || null,

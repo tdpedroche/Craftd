@@ -987,14 +987,17 @@ button {
 }
 
 .feature-card-highlight {
-  background: var(--color-primary);
+  background: var(--color-primary-light);
   border-color: var(--color-primary);
-  color: white;
+  border-width: 2px;
 }
 
-.feature-card-highlight h3,
+.feature-card-highlight h3 {
+  color: var(--color-primary);
+}
+
 .feature-card-highlight p {
-  color: white;
+  color: var(--color-text-muted);
 }
 
 .feature-card-highlight .feature-icon { filter: none; }

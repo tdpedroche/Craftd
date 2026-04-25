@@ -1024,12 +1024,15 @@
   }
 
   // ── Render all sections ──
-  function renderPlaybook(email, text) {
+  function renderPlaybook(email, firstName, text) {
     const sections = parsePlaybook(text);
     const title = sections._title || 'Your Personal AI Playbook';
+    const displayName = firstName || email;
 
     document.getElementById('pb-hero-title').textContent = title;
-    document.getElementById('pb-hero-sub').textContent = 'Built for ' + email;
+    document.getElementById('pb-hero-sub').textContent = 'Built for ' + displayName;
+    const displayName = data.first_name ? data.first_name : email;
+    document.getElementById('pb-hero-sub').textContent = 'Built for ' + displayName;
 
     const container = document.getElementById('pb-sections');
     let html = '';
@@ -1105,7 +1108,7 @@
         return;
       }
       const data = await res.json();
-      renderPlaybook(data.email, data.playbook);
+      renderPlaybook(data.email, data.first_name || '', data.playbook);
     } catch (e) {
       showError('Network error — please try refreshing.');
     }

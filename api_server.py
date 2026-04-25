@@ -25,6 +25,7 @@ def init_db():
         CREATE TABLE IF NOT EXISTS leads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL,
+            first_name TEXT,
             goal TEXT, role TEXT, pain TEXT, time_drain TEXT,
             experience TEXT, tried TEXT, usecase TEXT,
             time_available TEXT, success_vision TEXT,
@@ -114,6 +115,7 @@ def build_prompt(answers):
     return (
         "You are Craftd, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
         "Generate a complete, highly personalized AI playbook for someone with this exact profile:\n"
+        + (("- First name: " + answers.get("first_name","").strip() + "\n") if answers.get("first_name","").strip() else "")
         "- Life situation: They are " + role + "\n"
         "- Main goal: They want to " + goal + "\n"
         "- Biggest pain point: This person " + pain + "\n"
@@ -237,6 +239,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 class SubmitRequest(BaseModel):
     email: str
+    first_name: Optional[str] = None
     goal: Optional[str] = None
     role: Optional[str] = None
     pain: Optional[str] = None
@@ -251,15 +254,15 @@ class SubmitRequest(BaseModel):
 async def submit(body: SubmitRequest):
     db = get_db()
     cursor = db.execute(
-        "INSERT INTO leads (email, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (?,?,?,?,?,?,?,?,?,?)",
-        (body.email, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
+        "INSERT INTO leads (email, first_name, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        (body.email, body.first_name, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
     )
     lead_id = cursor.lastrowid
     db.commit()
     db.close()
     answers = {"goal": body.goal, "role": body.role, "pain": body.pain, "time_drain": body.time_drain,
                "experience": body.experience, "tried": body.tried, "usecase": body.usecase,
-               "time": body.time, "success": body.success}
+               "time": body.time, "success": body.success, "first_name": body.first_name}
     threading.Thread(target=generate_and_save, args=(lead_id, answers, body.email), daemon=True).start()
     return {"pending_id": lead_id}
 
@@ -298,7 +301,7 @@ async def get_playbook(session_id: str):
                 raise HTTPException(status_code=402, detail="Payment not confirmed.")
         except stripe.error.StripeError as e:
             raise HTTPException(status_code=402, detail="Could not verify payment: " + str(e))
-    return {"email": row["email"], "playbook": row["playbook"]}
+    return {"email": row["email"], "first_name": row["first_name"] or "", "playbook": row["playbook"]}
 
 @app.post("/api/webhook")
 async def stripe_webhook(request: Request, stripe_signature: str = Header(None)):
