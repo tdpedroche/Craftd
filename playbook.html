@@ -877,19 +877,32 @@
     const days = ['Mon','Tue','Wed','Thu','Fri'];
 
     // Try to split by Week headers
-    const weekChunks = raw.split(/Week\s*\d+[:\s]*/i).filter(s => s.trim());
-    if (weekChunks.length < 2) {
-      // fallback: render as list
-      return renderWorkflow(raw);
+    // Split keeping the Week header text for theme extraction
+    const weekSplitRe = /\*{0,2}Week\s*(\d+)[:\s*]*/gi;
+    const weekParts = [];
+    let wm; let lastIdx = 0;
+    const rawLines = raw;
+    // Use matchAll-style loop
+    const allMatches = [...rawLines.matchAll(/\*{0,2}Week\s*\d+[^\n]*/gi)];
+    if (allMatches.length < 1) return renderWorkflow(raw);
+
+    for (let wi = 0; wi < allMatches.length; wi++) {
+      const m = allMatches[wi];
+      const nextM = allMatches[wi + 1];
+      const chunk = nextM ? rawLines.slice(m.index + m[0].length, nextM.index) : rawLines.slice(m.index + m[0].length);
+      // Extract theme from header line itself
+      const headerTheme = m[0].replace(/\*{0,2}Week\s*\d+\s*[:\-]?\s*/i,'').replace(/\*{0,2}/g,'').replace(/[()]/g,'').trim();
+      weekParts.push({ theme: headerTheme, chunk });
     }
 
+    if (weekParts.length < 1) return renderWorkflow(raw);
+
     let html = '<div class="pb-weeks">';
-    for (let w = 0; w < Math.min(weekChunks.length, 4); w++) {
-      const chunk = weekChunks[w];
-      const themeMatch = chunk.match(/^(.+?)\n/);
-      const theme = themeMatch ? themeMatch[1].replace(/[()]/g,'').trim() : weekThemes[w];
+    for (let w = 0; w < Math.min(weekParts.length, 4); w++) {
+      const { theme: rawTheme, chunk } = weekParts[w];
+      const theme = rawTheme || weekThemes[w];
       const taskLines = chunk.split('\n')
-        .filter(l => /^[\-•\[\]☐✅\d]/.test(l.trim()))
+        .filter(l => /^[\-•\[\]☐✅\d*]/.test(l.trim()))
         .slice(0, 5);
 
       html += `<div class="pb-week ${weekColors[w]}">
@@ -937,23 +950,39 @@
 
   // ── Section config ──
   const SECTION_CONFIG = [
-    { id: 'pb-intro',    keys: ['how_ai_fits_into_your_life','introduction','intro'],
+    { id: 'pb-intro',    match: ['how_ai_fits','introduction','intro','how_ai'],
       icon: '👋', iconClass: 'icon-purple', title: 'How AI Fits Into Your Life', sub: 'Why this is built for you', render: renderIntro },
-    { id: 'pb-tools',   keys: ['your_recommended_ai_tools','recommended_ai_tools','tools','your_tools'],
+    { id: 'pb-tools',   match: ['recommended_ai_tools','your_tools','tool'],
       icon: '🛠', iconClass: 'icon-blue', title: 'Your Recommended AI Tools', sub: 'Free tools matched to your situation', render: renderTools },
-    { id: 'pb-workflow',keys: ['your_daily_ai_workflow','daily_ai_workflow','daily_workflow','workflow'],
+    { id: 'pb-workflow',match: ['daily_ai_workflow','daily_workflow','workflow'],
       icon: '⚡', iconClass: 'icon-green', title: 'Your Daily AI Workflow', sub: 'A real routine you can start tomorrow', render: renderWorkflow },
-    { id: 'pb-prompts', keys: ['your_15_copy_paste_prompts','15_copy_paste_prompts','copy_paste_prompts','prompts','your_copy_paste_prompts'],
+    { id: 'pb-prompts', match: ['copy_paste_prompt','prompt','15_copy'],
       icon: '📋', iconClass: 'icon-amber', title: '15 Copy-Paste Prompts', sub: 'Click Copy, paste into ChatGPT, done', render: renderPrompts },
-    { id: 'pb-examples',keys: ['real_output_examples','output_examples','examples'],
+    { id: 'pb-examples',match: ['output_example','real_example','example'],
       icon: '💡', iconClass: 'icon-indigo', title: 'Real Output Examples', sub: 'See exactly what AI will produce', render: renderExamples },
-    { id: 'pb-avoid',   keys: ['what_to_avoid__beginner_mistakes_','what_to_avoid_beginner_mistakes_','beginner_mistakes','what_to_avoid','mistakes'],
+    { id: 'pb-avoid',   match: ['avoid','mistake','beginner_mistake'],
       icon: '🚫', iconClass: 'icon-red', title: 'What to Avoid', sub: 'Common mistakes and how to sidestep them', render: renderMistakes },
-    { id: 'pb-plan',    keys: ['your_30_day_action_plan','30_day_action_plan','30_day_plan','action_plan'],
+    { id: 'pb-plan',    match: ['30_day','action_plan','30day','day_action'],
       icon: '📅', iconClass: 'icon-teal', title: 'Your 30-Day Action Plan', sub: 'Daily tasks that build real momentum', render: render30Day },
-    { id: 'pb-shortcut',keys: ['your_biggest_shortcut','biggest_shortcut','shortcut'],
+    { id: 'pb-shortcut',match: ['shortcut','biggest_shortcut'],
       icon: '🚀', iconClass: 'icon-pink', title: 'Your Biggest Shortcut', sub: 'The one thing that changes everything', render: renderIntro },
   ];
+
+  function findSection(sections, matchKeys) {
+    // Exact match first
+    for (const mk of matchKeys) {
+      for (const [k, v] of Object.entries(sections)) {
+        if (k === mk) return v;
+      }
+    }
+    // Partial match — key contains any match token
+    for (const mk of matchKeys) {
+      for (const [k, v] of Object.entries(sections)) {
+        if (k.includes(mk) || mk.includes(k)) return v;
+      }
+    }
+    return '';
+  }
 
   // ── Render all sections ──
   function renderPlaybook(email, text) {
@@ -967,19 +996,7 @@
     let html = '';
 
     for (const cfg of SECTION_CONFIG) {
-      // Find the right key
-      let raw = '';
-      for (const k of cfg.keys) {
-        if (sections[k]) { raw = sections[k]; break; }
-      }
-      // Fuzzy fallback — partial key match
-      if (!raw) {
-        for (const [k,v] of Object.entries(sections)) {
-          if (cfg.keys.some(ck => k.includes(ck.split('_')[0]) || ck.includes(k.split('_')[0]))) {
-            raw = v; break;
-          }
-        }
-      }
+      const raw = findSection(sections, cfg.match);
       if (!raw) continue;
 
       html += `<div class="pb-section" id="${cfg.id}">
