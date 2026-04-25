@@ -37,57 +37,68 @@ def init_db():
     db.close()
 
 GOAL_LABELS = {
-    "make-money":    "make money or grow their income",
-    "save-time":     "save time at work or home",
-    "learn-skills":  "learn new skills and get ahead professionally",
-    "daily-life":    "simplify their everyday life",
+    "make-money":    "start or grow a side income stream",
+    "save-time":     "get hours of their week back",
+    "learn-skills":  "build skills that make them more valuable",
+    "daily-life":    "make everyday life easier and less chaotic",
+    "career-growth": "advance their career or land a better job",
 }
 ROLE_LABELS = {
-    "employee":         "a full-time employee with a 9-to-5 job",
-    "freelancer":       "a freelancer or self-employed professional",
+    "employee":         "a full-time employee at a company",
+    "freelancer":       "a freelancer, consultant, or contractor",
     "business-owner":   "a business owner or entrepreneur",
     "student":          "a student or recent graduate",
-    "parent-homemaker": "a stay-at-home parent or homemaker",
+    "parent-homemaker": "a stay-at-home parent or caregiver",
+    "job-seeker":       "a job seeker or career changer",
 }
 PAIN_LABELS = {
-    "overwhelmed": "feels overwhelmed and doesn't know where to start with AI",
-    "no-time":     "never has enough time to get everything done",
-    "stuck":       "feels stuck and can't make real progress toward their goals",
-    "results":     "is putting in effort but not seeing results",
+    "overwhelmed":   "has too many options and doesn't know where to start",
+    "no-time":       "is always busy but never feels productive",
+    "stuck":         "knows what they want but can't seem to move forward",
+    "results":       "tries things but nothing seems to actually work",
+    "consistency":   "starts strong but struggles to stay consistent",
 }
 TIME_DRAIN_LABELS = {
-    "emails-messages":   "emails and messages",
-    "research-planning": "research, planning, and decision-making",
-    "content-writing":   "writing content, posts, or documents",
-    "admin-tasks":       "repetitive admin and organizational tasks",
+    "emails-messages":   "emails, messages, and back-and-forth communication",
+    "research-planning": "looking things up, researching, and making decisions",
+    "content-writing":   "writing — posts, reports, scripts, or documents",
+    "admin-tasks":       "scheduling, organizing, and repetitive busywork",
+    "client-work":       "client or customer requests and follow-ups",
 }
 EXP_LABELS = {
-    "none":    "a total beginner who has barely used any AI tools",
-    "little":  "a beginner who has tried ChatGPT a couple of times",
-    "some":    "has some experience and uses AI occasionally but not consistently",
-    "regular": "a regular user who uses AI tools several times a week",
+    "none":     "has never really used AI tools",
+    "little":   "has played around with ChatGPT once or twice",
+    "some":     "uses AI casually here and there but not consistently",
+    "regular":  "uses AI regularly as part of their routine",
+    "advanced": "an advanced user who uses multiple tools and writes their own prompts",
 }
 TRIED_LABELS = {
-    "nothing":        "has never tried AI at all",
-    "basic-questions": "has asked AI basic questions or had a conversation",
-    "work-tasks":     "has used AI for a work task or project",
-    "multiple-tools": "has tried multiple different AI tools or apps",
+    "nothing":         "has never tried AI at all — starting from zero",
+    "basic-questions": "has chatted with AI or asked simple questions",
+    "work-tasks":      "has used AI to help with a real work task",
+    "multiple-tools":  "has explored several tools like ChatGPT, Midjourney, etc.",
+    "built-workflow":  "has already built part of their workflow around AI",
 }
 USECASE_LABELS = {
-    "writing":  "writing, emails, content creation, and communication",
-    "business": "business planning, strategy, and analysis",
-    "creative": "creative projects, art, music, and design",
-    "personal": "personal habits, health, learning, and life admin",
+    "writing":  "writing — emails, content, copy, captions, and scripts",
+    "business": "business — strategy, planning, research, and analysis",
+    "creative": "creative — design, music, video, ideas, and storytelling",
+    "personal": "personal growth — habits, learning, health, and finance",
+    "income":   "making money — freelancing, selling, or building side hustles",
 }
 TIME_LABELS = {
-    "5-10":  "5-10 minutes", "15-30": "15-30 minutes",
-    "30-60": "30-60 minutes", "60+":   "more than an hour",
+    "5-10":    "under 10 minutes a day",
+    "15-30":   "15-30 minutes a day",
+    "30-60":   "30-60 minutes a day",
+    "60+":     "more than an hour a day",
+    "varies":  "a variable amount — some days a lot, some days nothing",
 }
 SUCCESS_LABELS = {
-    "save-10hrs":     "saving 10+ hours a month on tasks they hate",
-    "earn-more":      "earning more money or landing better opportunities",
-    "feel-confident": "feeling confident and ahead of the people around them",
-    "less-stress":    "having less stress, more focus, and a better work-life balance",
+    "save-10hrs":    "getting back 10+ hours a month they were wasting",
+    "earn-more":     "making real extra money they weren't making before",
+    "feel-confident":"feeling smarter and more capable than their peers",
+    "less-stress":   "feeling calm, focused, and in control of their life",
+    "career-win":    "landing a promotion, client, or opportunity they couldn't before",
 }
 
 def build_prompt(answers):
