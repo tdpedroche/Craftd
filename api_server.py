@@ -116,7 +116,7 @@ def build_prompt(answers):
         "You are Craftd, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
         "Generate a complete, highly personalized AI playbook for someone with this exact profile:\n"
         + (("- First name: " + answers.get("first_name","").strip() + "\n") if answers.get("first_name","").strip() else "")
-        "- Life situation: They are " + role + "\n"
+        + "- Life situation: They are " + role + "\n"
         "- Main goal: They want to " + goal + "\n"
         "- Biggest pain point: This person " + pain + "\n"
         "- Biggest time drain: " + drain + "\n"
