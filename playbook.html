@@ -754,31 +754,70 @@
 
   // ── Render workflow numbered steps ──
   function renderWorkflow(raw) {
-    const lines = raw.split('\n').filter(Boolean);
+    const lines = raw.split('\n').filter(l => l.trim());
     let steps = '';
     let num = 0;
-    for (const line of lines) {
-      const m = line.match(/^\d+\.\s+(.+)$/) || line.match(/^[-•]\s+(.+)$/);
-      if (m) {
+
+    // Try to detect format: numbered, bulleted, or bold-headed paragraphs
+    const hasNumbered = lines.some(l => /^\d+\./.test(l.trim()));
+    const hasBullet   = lines.some(l => /^[-•*]/.test(l.trim()));
+    const hasBold     = lines.some(l => /^\*\*/.test(l.trim()));
+
+    if (!hasNumbered && !hasBullet && !hasBold) {
+      // Plain paragraphs — wrap each as a step
+      const paras = raw.split(/\n\n+/).filter(p => p.trim());
+      for (const para of paras) {
         num++;
-        const bold = m[1].match(/^\*\*(.+?)\*\*[:\s]+(.+)$/);
+        const bold = para.trim().match(/^\*\*(.+?)\*\*[:\s]+(.+)$/s);
         if (bold) {
           steps += `<div class="pb-workflow-step">
             <div class="pb-step-num">${num}</div>
             <div class="pb-step-content">
-              <div class="pb-step-title">${esc(bold[1])}</div>
-              <div class="pb-step-desc">${mdInline(bold[2])}</div>
+              <div class="pb-step-title">${esc(bold[1].trim())}</div>
+              <div class="pb-step-desc">${mdInline(bold[2].trim())}</div>
             </div>
           </div>`;
         } else {
           steps += `<div class="pb-workflow-step">
             <div class="pb-step-num">${num}</div>
-            <div class="pb-step-content"><div class="pb-step-desc">${mdInline(m[1])}</div></div>
+            <div class="pb-step-content"><div class="pb-step-desc">${mdInline(para.trim())}</div></div>
           </div>`;
         }
       }
+      return steps ? '<div class="pb-workflow-steps">' + steps + '</div>' : renderIntro(raw);
     }
-    return '<div class="pb-workflow-steps">' + steps + '</div>';
+
+    for (const line of lines) {
+      const m = line.match(/^\d+\.\s+(.+)$/) || line.match(/^[-•*]\s+(.+)$/) || line.match(/^\*\*(.+)\*\*$/);
+      if (m) {
+        num++;
+        const text = m[1] || line.replace(/^\*\*/,'').replace(/\*\*$/,'');
+        const bold = text.match(/^\*?\*?(.+?)\*?\*?[:\s]+(.+)$/);
+        if (bold && bold[2].trim()) {
+          steps += `<div class="pb-workflow-step">
+            <div class="pb-step-num">${num}</div>
+            <div class="pb-step-content">
+              <div class="pb-step-title">${esc(bold[1].replace(/\*/g,'').trim())}</div>
+              <div class="pb-step-desc">${mdInline(bold[2].trim())}</div>
+            </div>
+          </div>`;
+        } else {
+          steps += `<div class="pb-workflow-step">
+            <div class="pb-step-num">${num}</div>
+            <div class="pb-step-content"><div class="pb-step-desc">${mdInline(text.trim())}</div></div>
+          </div>`;
+        }
+      } else if (num > 0 && line.trim() && !line.startsWith('#')) {
+        // continuation line — append to last step
+        const lastStep = steps.lastIndexOf('<div class="pb-step-desc">');
+        if (lastStep !== -1) {
+          const closeTag = '</div>';
+          const insertAt = steps.lastIndexOf(closeTag);
+          steps = steps.slice(0, insertAt) + ' ' + mdInline(line.trim()) + closeTag + steps.slice(insertAt + closeTag.length);
+        }
+      }
+    }
+    return steps ? '<div class="pb-workflow-steps">' + steps + '</div>' : renderIntro(raw);
   }
 
   // ── Render prompts ──
