@@ -94,7 +94,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       stepLabel.textContent = 'One last thing…';
       backBtn.style.visibility = 'visible';
       quizNav.style.display = 'flex';
-      updateDots(5); // all filled
+      updateDots(TOTAL_STEPS - 1); // all filled (highlight last dot)
       return;
     }
 
@@ -160,6 +160,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
           showStep(currentStep);
         } else {
           // All 10 questions done — show email capture
+          onEmailStep = true;
           showStep('email');
         }
       }, 350);
@@ -167,13 +168,15 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
   });
 
   // Back button
+  let onEmailStep = false;
   if (backBtn) {
     backBtn.addEventListener('click', () => {
-      if (currentStep > 1) {
+      if (onEmailStep) {
+        onEmailStep = false;
+        showStep(currentStep);
+      } else if (currentStep > 1) {
         currentStep--;
         showStep(currentStep);
-      } else if (currentStep === 1) {
-        // already at first
       }
     });
   }

@@ -103,15 +103,16 @@ SUCCESS_LABELS = {
 }
 
 def build_prompt(answers):
-    goal    = GOAL_LABELS.get(answers.get("goal",""), answers.get("goal",""))
-    role    = ROLE_LABELS.get(answers.get("role",""), answers.get("role",""))
-    pain    = PAIN_LABELS.get(answers.get("pain",""), answers.get("pain",""))
-    drain   = TIME_DRAIN_LABELS.get(answers.get("time_drain",""), answers.get("time_drain",""))
-    exp     = EXP_LABELS.get(answers.get("experience",""), answers.get("experience",""))
-    tried   = TRIED_LABELS.get(answers.get("tried",""), answers.get("tried",""))
-    usecase = USECASE_LABELS.get(answers.get("usecase",""), answers.get("usecase",""))
-    time_av = TIME_LABELS.get(answers.get("time",""), answers.get("time",""))
-    success = SUCCESS_LABELS.get(answers.get("success",""), answers.get("success",""))
+    goal     = GOAL_LABELS.get(answers.get("goal",""), answers.get("goal",""))
+    role     = ROLE_LABELS.get(answers.get("role",""), answers.get("role",""))
+    pain     = PAIN_LABELS.get(answers.get("pain",""), answers.get("pain",""))
+    drain    = TIME_DRAIN_LABELS.get(answers.get("time_drain",""), answers.get("time_drain",""))
+    exp      = EXP_LABELS.get(answers.get("experience",""), answers.get("experience",""))
+    tried    = TRIED_LABELS.get(answers.get("tried",""), answers.get("tried",""))
+    usecase  = USECASE_LABELS.get(answers.get("usecase",""), answers.get("usecase",""))
+    time_av  = TIME_LABELS.get(answers.get("time",""), answers.get("time",""))
+    success  = SUCCESS_LABELS.get(answers.get("success",""), answers.get("success",""))
+    learning = LEARNING_LABELS.get(answers.get("learning_style",""), answers.get("learning_style",""))
     return (
         "You are Craftd, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
         "Generate a complete, highly personalized AI playbook for someone with this exact profile:\n"
@@ -124,7 +125,9 @@ def build_prompt(answers):
         "- What they've already tried: This person " + tried + "\n"
         "- Primary use area: " + usecase + "\n"
         "- Time available daily: " + time_av + " per day\n"
-        "- 90-day success vision: They want to end up " + success + "\n\n"
+        "- 90-day success vision: They want to end up " + success + "\n"
+        + (("- Learning style: This person " + learning + "\n") if learning else "")
+        + "\n"
         "Write a warm, encouraging, beginner-friendly playbook with these EXACT sections. "
         "Make every single section deeply specific to this person's role, goal, and situation — "
         "not generic advice. Use their exact context throughout.\n\n"
@@ -249,6 +252,7 @@ class SubmitRequest(BaseModel):
     usecase: Optional[str] = None
     time: Optional[str] = None
     success: Optional[str] = None
+    learning_style: Optional[str] = None
 
 @app.post("/api/submit")
 async def submit(body: SubmitRequest):
@@ -262,7 +266,8 @@ async def submit(body: SubmitRequest):
     db.close()
     answers = {"goal": body.goal, "role": body.role, "pain": body.pain, "time_drain": body.time_drain,
                "experience": body.experience, "tried": body.tried, "usecase": body.usecase,
-               "time": body.time, "success": body.success, "first_name": body.first_name}
+               "time": body.time, "success": body.success, "first_name": body.first_name,
+               "learning_style": body.learning_style}
     threading.Thread(target=generate_and_save, args=(lead_id, answers, body.email), daemon=True).start()
     return {"pending_id": lead_id}
 
@@ -284,7 +289,7 @@ async def get_status(pending_id: int):
 async def get_playbook(session_id: str):
     stripe_secret_key = os.environ.get("STRIPE_SECRET_KEY", "")
     db = get_db()
-    row = db.execute("SELECT id, email, playbook, paid FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
+    row = db.execute("SELECT id, email, first_name, playbook, paid FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
     db.close()
     if not row:
         raise HTTPException(status_code=404, detail="Playbook not found.")
