@@ -583,8 +583,8 @@
   <div class="pb-error" id="pb-error" style="padding-top:80px;">
     <div style="font-size:2.5rem;">⚠️</div>
     <h2 style="font-size:20px;color:var(--color-text);">Couldn't load your playbook</h2>
-    <p id="pb-error-msg" style="color:var(--color-text-muted);font-size:14px;max-width:380px;">The link may be expired or invalid.</p>
-    <a href="index.html" class="btn btn-primary">Go Back Home</a>
+    <p id="pb-error-msg" style="color:var(--color-text-muted);font-size:14px;max-width:420px;line-height:1.6;">The link may have expired. This can happen if the server restarted since you paid. Please take the quiz again — it only takes 3 minutes.</p>
+    <a href="index.html" class="btn btn-primary">Start Fresh →</a>
   </div>
 
   <!-- Main layout (hidden until loaded) -->
@@ -1098,7 +1098,12 @@
       const res = await fetch(API + '/api/playbook?session_id=' + encodeURIComponent(sessionId));
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        if (res.status === 402) {
+        if (res.status === 404) {
+          // Session gone (DB reset after redeploy) — clear stale localStorage
+          localStorage.removeItem('craftd_session_id');
+          localStorage.removeItem('craftd_days');
+          showError('Your session has expired. Please take the quiz again — it only takes 3 minutes.');
+        } else if (res.status === 402) {
           showError('Payment not yet confirmed. If you just paid, please wait a few seconds and refresh.');
         } else {
           showError(err.detail || 'Could not load playbook.');
