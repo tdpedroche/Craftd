@@ -101,6 +101,13 @@ SUCCESS_LABELS = {
     "less-stress":   "feeling calm, focused, and in control of their life",
     "career-win":    "landing a promotion, client, or opportunity they couldn't before",
 }
+LEARNING_LABELS = {
+    "step-by-step":   "prefers exact steps they can follow without thinking",
+    "examples":       "learns best by seeing real examples they can copy and tweak",
+    "just-start":     "prefers to be pointed at a tool and experiment freely",
+    "big-picture":    "needs to understand the big picture before diving into details",
+    "accountability": "thrives with checklists and plans they can hold themselves to",
+}
 
 def build_prompt(answers):
     goal     = GOAL_LABELS.get(answers.get("goal",""), answers.get("goal",""))
