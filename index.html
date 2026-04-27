@@ -509,11 +509,16 @@
             <div class="checkout-state">
               <div class="checkout-icon">🎉</div>
               <h3 class="checkout-title">Your playbook is ready!</h3>
-              <p class="checkout-sub">Unlock your personalized AI playbook with a one-time payment of <strong>$37</strong>.</p>
-              <!-- Whop embedded checkout mounts here -->
-              <div id="whop-checkout-container" style="width:100%;margin:20px 0;"></div>
-              <!-- Fallback button if Whop embed fails or returns a redirect URL -->
-              <a href="#" id="checkout-btn" class="btn btn-primary btn-lg checkout-cta" data-testid="button-checkout" style="display:none;">
+              <p class="checkout-sub">We've built your personalized AI playbook. Unlock it now for a one-time payment of <strong>$37</strong>.</p>
+              <div class="checkout-what">
+                <div class="checkout-item">✓ Full personalized AI playbook</div>
+                <div class="checkout-item">✓ 15 copy-paste prompts built for your situation</div>
+                <div class="checkout-item">✓ Your personalized daily AI workflow</div>
+                <div class="checkout-item">✓ Full 30-day action plan</div>
+                <div class="checkout-item">✓ Recommended tools for your exact use case</div>
+                <div class="checkout-item">✓ What to avoid as a beginner</div>
+              </div>
+              <a href="#" id="checkout-btn" class="btn btn-primary btn-lg checkout-cta" data-testid="button-checkout">
                 Unlock My Playbook — $37 →
               </a>
               <p class="checkout-note">Secure payment · Instant access · No subscription</p>
@@ -591,9 +596,7 @@
     </div>
   </footer>
 
-  <!-- Whop embedded checkout loader -->
-  <script src="https://js.whop.com/checkout/loader.js"></script>
-  <script src="script.js?v=12"></script>
+  <script src="script.js?v=13"></script>
   <script>
     // Show "Return to my playbook" banner if they've already paid
     // Validates the session is still alive before showing

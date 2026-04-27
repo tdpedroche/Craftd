@@ -1083,31 +1083,19 @@
 
   // ── Load ──
   async function loadPlaybook() {
-    const params    = new URLSearchParams(location.search);
-    const pendingId = params.get('pending_id');  // Whop redirect
-    let sessionId   = params.get('session_id');  // Stripe redirect
-
-    // Build the API URL depending on which param we have
-    let playbookApiUrl;
-    if (pendingId) {
-      // Whop flow — look up by lead ID, store for return banner
-      playbookApiUrl = API + '/api/playbook?pending_id=' + encodeURIComponent(pendingId);
-      // We'll store the session_id after we get it back if needed
+    const params = new URLSearchParams(location.search);
+    let sessionId = params.get('session_id');
+    if (sessionId) {
+      localStorage.setItem('craftd_session_id', sessionId);
     } else {
-      if (sessionId) {
-        localStorage.setItem('craftd_session_id', sessionId);
-      } else {
-        sessionId = localStorage.getItem('craftd_session_id');
-      }
-      if (!sessionId) {
-        showError('No session found. Please take the quiz again.');
-        return;
-      }
-      playbookApiUrl = API + '/api/playbook?session_id=' + encodeURIComponent(sessionId);
+      sessionId = localStorage.getItem('craftd_session_id');
     }
-
+    if (!sessionId) {
+      showError('No session ID found. Please check your email or return to Craftd.');
+      return;
+    }
     try {
-      const res = await fetch(playbookApiUrl);
+      const res = await fetch(API + '/api/playbook?session_id=' + encodeURIComponent(sessionId));
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         if (res.status === 404) {

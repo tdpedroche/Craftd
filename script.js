@@ -241,49 +241,18 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
             if (status.ready && status.checkout_url) {
               clearInterval(poll);
-              showStep('checkout');
-              const checkoutUrl = status.checkout_url;
-              const container   = document.getElementById('whop-checkout-container');
-              const btn         = document.getElementById('checkout-btn');
-
-              // Dev mode / already paid — direct redirect
-              if (checkoutUrl.startsWith('/') || checkoutUrl.startsWith('playbook')) {
-                window.location.href = checkoutUrl;
+              // Dev mode — already paid, go straight to playbook
+              if (status.checkout_url.startsWith('/') || status.checkout_url.startsWith('playbook')) {
+                window.location.href = status.checkout_url;
                 return;
               }
-
-              // Try Whop embedded checkout
-              const isWhopUrl = checkoutUrl.includes('whop.com');
-              if (isWhopUrl && container && window.WhopCheckout) {
-                try {
-                  // Extract plan ID from the Whop checkout URL
-                  const planMatch = checkoutUrl.match(/\/checkout\/([^/?]+)/);
-                  const planId    = planMatch ? planMatch[1] : null;
-                  if (planId) {
-                    container.innerHTML = '';
-                    const el = document.createElement('div');
-                    el.setAttribute('data-whop-checkout-plan-id', planId);
-                    el.setAttribute('data-whop-checkout-return-url', window.location.origin + '/playbook.html?pending_id=' + pending_id);
-                    container.appendChild(el);
-                    if (window.WhopCheckout && window.WhopCheckout.mount) {
-                      window.WhopCheckout.mount();
-                    }
-                  } else {
-                    throw new Error('Could not parse plan ID');
-                  }
-                } catch (embedErr) {
-                  console.warn('Whop embed failed, showing button fallback:', embedErr);
-                  if (btn) { btn.href = checkoutUrl; btn.style.display = ''; }
-                }
-              } else {
-                // Fallback: show button (Stripe or Whop direct link)
-                if (btn) {
-                  btn.href     = checkoutUrl;
-                  btn.style.display = '';
-                  btn.target   = '_blank';
-                  btn.rel      = 'noopener noreferrer';
-                  btn.textContent = 'Unlock My Playbook — $37 →';
-                }
+              // Show checkout step with Stripe button
+              showStep('checkout');
+              const btn = document.getElementById('checkout-btn');
+              if (btn) {
+                btn.href = status.checkout_url;
+                btn.target = '_blank';
+                btn.rel = 'noopener noreferrer';
               }
             }
 
