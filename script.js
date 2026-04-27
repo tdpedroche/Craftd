@@ -241,18 +241,47 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
             if (status.ready && status.checkout_url) {
               clearInterval(poll);
-              // Always show checkout step with button — lets user click to open Stripe
-              // (iframe environments block automatic window.location redirects to external domains)
               showStep('checkout');
-              const btn = document.getElementById('checkout-btn');
-              if (btn) {
-                btn.href = status.checkout_url;
-                btn.target = '_blank'; // open in new tab to escape iframe restrictions
-                btn.rel = 'noopener noreferrer';
-                if (status.checkout_url.startsWith('/') || status.checkout_url.startsWith('playbook')) {
-                  btn.textContent = 'View My Playbook →';
-                  btn.target = '_self';
-                } else {
+              const checkoutUrl = status.checkout_url;
+              const container   = document.getElementById('whop-checkout-container');
+              const btn         = document.getElementById('checkout-btn');
+
+              // Dev mode / already paid — direct redirect
+              if (checkoutUrl.startsWith('/') || checkoutUrl.startsWith('playbook')) {
+                window.location.href = checkoutUrl;
+                return;
+              }
+
+              // Try Whop embedded checkout
+              const isWhopUrl = checkoutUrl.includes('whop.com');
+              if (isWhopUrl && container && window.WhopCheckout) {
+                try {
+                  // Extract plan ID from the Whop checkout URL
+                  const planMatch = checkoutUrl.match(/\/checkout\/([^/?]+)/);
+                  const planId    = planMatch ? planMatch[1] : null;
+                  if (planId) {
+                    container.innerHTML = '';
+                    const el = document.createElement('div');
+                    el.setAttribute('data-whop-checkout-plan-id', planId);
+                    el.setAttribute('data-whop-checkout-return-url', window.location.origin + '/playbook.html?pending_id=' + pending_id);
+                    container.appendChild(el);
+                    if (window.WhopCheckout && window.WhopCheckout.mount) {
+                      window.WhopCheckout.mount();
+                    }
+                  } else {
+                    throw new Error('Could not parse plan ID');
+                  }
+                } catch (embedErr) {
+                  console.warn('Whop embed failed, showing button fallback:', embedErr);
+                  if (btn) { btn.href = checkoutUrl; btn.style.display = ''; }
+                }
+              } else {
+                // Fallback: show button (Stripe or Whop direct link)
+                if (btn) {
+                  btn.href     = checkoutUrl;
+                  btn.style.display = '';
+                  btn.target   = '_blank';
+                  btn.rel      = 'noopener noreferrer';
                   btn.textContent = 'Unlock My Playbook — $37 →';
                 }
               }

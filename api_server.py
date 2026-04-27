@@ -5,7 +5,7 @@ from typing import Optional
 from dotenv import load_dotenv
 load_dotenv()
 
-import stripe
+import hashlib, hmac, httpx, stripe
 from anthropic import Anthropic
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -172,17 +172,46 @@ def build_prompt(answers):
         "Every section must feel like it was written specifically for this person, not copy-pasted from a template."
     )
 
+def create_whop_checkout(lead_id: int, email: str, base_url: str) -> tuple[str, str]:
+    """Create a Whop checkout configuration and return (session_token, checkout_url).
+    Returns (None, None) if Whop keys are missing."""
+    whop_api_key = os.environ.get("WHOP_API_KEY", "").strip()
+    whop_plan_id = os.environ.get("WHOP_PLAN_ID", "").strip()
+    if not whop_api_key or not whop_plan_id:
+        return None, None
+
+    return_url = base_url + "/playbook.html?pending_id=" + str(lead_id)
+    payload = {
+        "plan_id": whop_plan_id,
+        "redirect_url": return_url,
+        "prefilled_email": email,
+        "metadata": {"lead_id": str(lead_id), "email": email},
+    }
+    headers = {
+        "Authorization": "Bearer " + whop_api_key,
+        "Content-Type": "application/json",
+    }
+    resp = httpx.post("https://api.whop.com/api/v2/checkout_sessions", json=payload, headers=headers, timeout=15)
+    print("DEBUG whop checkout response: " + str(resp.status_code) + " " + resp.text[:300], flush=True)
+    resp.raise_for_status()
+    data = resp.json()
+    session_token = data.get("id") or data.get("session_token") or data.get("checkout_session", {}).get("id", "")
+    checkout_url  = data.get("purchase_url") or data.get("url") or ""
+    return session_token, checkout_url
+
+
 def generate_and_save(lead_id, answers, email):
     try:
         # Read env vars fresh inside the thread
         anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        whop_api_key      = os.environ.get("WHOP_API_KEY", "").strip()
+        whop_plan_id      = os.environ.get("WHOP_PLAN_ID", "").strip()
         stripe_secret_key = os.environ.get("STRIPE_SECRET_KEY", "")
         stripe_price_id   = os.environ.get("STRIPE_PRICE_ID", "")
         base_url          = os.environ.get("BASE_URL", "https://craftd.onrender.com").strip().rstrip("/")
 
         print("DEBUG generate_and_save called", flush=True)
         print("DEBUG base_url=" + base_url, flush=True)
-        print("DEBUG price_id=" + stripe_price_id, flush=True)
 
         # Generate playbook
         client = Anthropic(api_key=anthropic_api_key)
@@ -194,17 +223,25 @@ def generate_and_save(lead_id, answers, email):
         playbook_text = message.content[0].text
         print("DEBUG playbook generated, length=" + str(len(playbook_text)), flush=True)
 
-        # Create Stripe checkout session
-        if stripe_secret_key and stripe_price_id:
-            stripe.api_key = stripe_secret_key
-            # Build success URL - must use string concatenation, NOT f-string
-            # so that {CHECKOUT_SESSION_ID} stays as a literal for Stripe to fill in
-            success_url = base_url + "/playbook.html?session_id=" + "{CHECKOUT_SESSION_ID}"
-            cancel_url  = base_url + "/#quiz"
+        # --- Try Whop first ---
+        session_id   = None
+        checkout_url = None
+        paid         = 0
 
-            print("DEBUG success_url=" + success_url, flush=True)
-            print("DEBUG cancel_url=" + cancel_url, flush=True)
+        if whop_api_key and whop_plan_id:
+            try:
+                session_id, checkout_url = create_whop_checkout(lead_id, email, base_url)
+                print("DEBUG whop session_id=" + str(session_id), flush=True)
+            except Exception as whop_err:
+                print("DEBUG whop checkout failed, falling back to Stripe: " + str(whop_err), flush=True)
+                session_id, checkout_url = None, None
 
+        # --- Fall back to Stripe if Whop failed or not configured ---
+        if not session_id and stripe_secret_key and stripe_price_id:
+            stripe.api_key  = stripe_secret_key
+            success_url     = base_url + "/playbook.html?session_id=" + "{CHECKOUT_SESSION_ID}"
+            cancel_url      = base_url + "/#quiz"
+            print("DEBUG falling back to stripe", flush=True)
             session = stripe.checkout.Session.create(
                 payment_method_types=["card"],
                 line_items=[{"price": stripe_price_id, "quantity": 1}],
@@ -214,19 +251,20 @@ def generate_and_save(lead_id, answers, email):
                 cancel_url=cancel_url,
                 metadata={"email": email},
             )
-            stripe_session_id = session.id
+            session_id   = session.id
             checkout_url = session.url
-            paid = 0
-            print("DEBUG stripe session created: " + stripe_session_id, flush=True)
-        else:
-            stripe_session_id = "dev_" + email.replace("@","_").replace(".","_")
-            checkout_url = "/playbook.html?session_id=" + stripe_session_id
-            paid = 1
+            print("DEBUG stripe session created: " + session_id, flush=True)
+
+        # --- Dev mode: no payment keys at all ---
+        if not session_id:
+            session_id   = "dev_" + email.replace("@","_").replace(".","_")
+            checkout_url = "/playbook.html?session_id=" + session_id
+            paid         = 1
 
         db = get_db()
         db.execute(
             "UPDATE leads SET playbook=?, stripe_session=?, checkout_url=?, paid=? WHERE id=?",
-            (playbook_text, stripe_session_id, checkout_url, paid, lead_id),
+            (playbook_text, session_id, checkout_url, paid, lead_id),
         )
         db.commit()
         db.close()
@@ -293,26 +331,65 @@ async def get_status(pending_id: int):
     return {"ready": True, "checkout_url": url, "error": None}
 
 @app.get("/api/playbook")
-async def get_playbook(session_id: str):
+async def get_playbook(session_id: str = None, pending_id: int = None):
+    """Fetch playbook by Whop/Stripe session_id OR by lead pending_id (after Whop redirect)."""
     stripe_secret_key = os.environ.get("STRIPE_SECRET_KEY", "")
+    whop_api_key      = os.environ.get("WHOP_API_KEY", "").strip()
     db = get_db()
-    row = db.execute("SELECT id, email, first_name, playbook, paid FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
+
+    if pending_id:
+        # Whop redirect returns pending_id — look up by lead ID
+        row = db.execute("SELECT id, email, first_name, playbook, paid, stripe_session FROM leads WHERE id=?", (pending_id,)).fetchone()
+    elif session_id:
+        row = db.execute("SELECT id, email, first_name, playbook, paid, stripe_session FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
+    else:
+        db.close()
+        raise HTTPException(status_code=400, detail="session_id or pending_id required.")
+
     db.close()
     if not row:
         raise HTTPException(status_code=404, detail="Playbook not found.")
-    if not row["paid"] and stripe_secret_key:
-        try:
-            stripe.api_key = stripe_secret_key
-            s = stripe.checkout.Session.retrieve(session_id)
-            if s.payment_status == "paid":
-                db2 = get_db()
-                db2.execute("UPDATE leads SET paid=1 WHERE id=?", (row["id"],))
-                db2.commit()
-                db2.close()
-            else:
-                raise HTTPException(status_code=402, detail="Payment not confirmed.")
-        except stripe.error.StripeError as e:
-            raise HTTPException(status_code=402, detail="Could not verify payment: " + str(e))
+
+    if not row["paid"]:
+        stored_session = row["stripe_session"] or ""
+        # Try Whop verification first
+        if whop_api_key and stored_session and not stored_session.startswith(("cs_", "dev_")):
+            try:
+                headers = {"Authorization": "Bearer " + whop_api_key}
+                r = httpx.get("https://api.whop.com/api/v2/checkout_sessions/" + stored_session, headers=headers, timeout=10)
+                if r.status_code == 200:
+                    data = r.json()
+                    status = data.get("status") or data.get("payment_status", "")
+                    if status in ("paid", "completed", "succeeded"):
+                        db2 = get_db()
+                        db2.execute("UPDATE leads SET paid=1 WHERE id=?", (row["id"],))
+                        db2.commit()
+                        db2.close()
+                    else:
+                        raise HTTPException(status_code=402, detail="Payment not confirmed yet.")
+                else:
+                    raise HTTPException(status_code=402, detail="Could not verify Whop payment.")
+            except HTTPException:
+                raise
+            except Exception as e:
+                raise HTTPException(status_code=402, detail="Whop verification error: " + str(e))
+        # Fall back to Stripe verification
+        elif stripe_secret_key and stored_session and stored_session.startswith("cs_"):
+            try:
+                stripe.api_key = stripe_secret_key
+                s = stripe.checkout.Session.retrieve(stored_session)
+                if s.payment_status == "paid":
+                    db2 = get_db()
+                    db2.execute("UPDATE leads SET paid=1 WHERE id=?", (row["id"],))
+                    db2.commit()
+                    db2.close()
+                else:
+                    raise HTTPException(status_code=402, detail="Payment not confirmed.")
+            except stripe.error.StripeError as e:
+                raise HTTPException(status_code=402, detail="Could not verify payment: " + str(e))
+        else:
+            raise HTTPException(status_code=402, detail="Payment not confirmed.")
+
     return {"email": row["email"], "first_name": row["first_name"] or "", "playbook": row["playbook"]}
 
 @app.post("/api/webhook")
@@ -336,10 +413,43 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
         db.close()
     return {"received": True}
 
+
+@app.post("/api/whop-webhook")
+async def whop_webhook(request: Request):
+    whop_webhook_secret = os.environ.get("WHOP_WEBHOOK_SECRET", "")
+    payload = await request.body()
+    # Verify Whop signature
+    if whop_webhook_secret:
+        sig_header = request.headers.get("whop-signature", "")
+        expected   = hmac.new(whop_webhook_secret.encode(), payload, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(expected, sig_header):
+            raise HTTPException(status_code=400, detail="Invalid Whop signature")
+    try:
+        event = json.loads(payload)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+    event_type = event.get("event") or event.get("type", "")
+    print("DEBUG whop webhook event_type=" + event_type, flush=True)
+    if event_type == "payment.succeeded":
+        data       = event.get("data", {})
+        # Whop sends checkout_session id or metadata.lead_id
+        session_id = data.get("checkout_session_id") or data.get("checkout_session", {}).get("id", "")
+        lead_id    = (data.get("metadata") or {}).get("lead_id")
+        db = get_db()
+        if lead_id:
+            db.execute("UPDATE leads SET paid=1 WHERE id=?", (lead_id,))
+        elif session_id:
+            db.execute("UPDATE leads SET paid=1 WHERE stripe_session=?", (session_id,))
+        db.commit()
+        db.close()
+        print("DEBUG whop payment marked paid lead_id=" + str(lead_id), flush=True)
+    return {"received": True}
+
 @app.get("/api/health")
 async def health():
     return {
         "status": "ok",
+        "whop": bool(os.environ.get("WHOP_API_KEY")),
         "stripe": bool(os.environ.get("STRIPE_SECRET_KEY")),
         "anthropic": bool(os.environ.get("ANTHROPIC_API_KEY")),
         "base_url": repr(os.environ.get("BASE_URL", "NOT SET")),
