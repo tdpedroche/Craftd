@@ -348,7 +348,7 @@ button {
 .logo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 0;
   flex-shrink: 0;
   text-decoration: none;
 }
@@ -366,6 +366,7 @@ button {
   font-size: 1.4rem;
   letter-spacing: -0.01em;
   color: var(--color-text);
+  margin-left: -10px;
 }
 
 .nav-links {
