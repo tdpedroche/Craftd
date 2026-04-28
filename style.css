@@ -1732,3 +1732,246 @@ button {
   color: var(--color-text-muted);
   max-width: 40ch;
 }
+
+/* ── Premium Quiz Cards ── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.quiz-option-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 16px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  line-height: 1.35;
+  min-height: 96px;
+}
+.quiz-option-card:hover {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99,91,255,0.12);
+}
+.quiz-option-card.selected {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-surface));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+.card-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+.card-label {
+  display: block;
+}
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+  .quiz-option-card {
+    flex-direction: row;
+    text-align: left;
+    min-height: unset;
+    padding: 16px;
+    gap: 14px;
+  }
+  .card-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Premium Generating Screen ── */
+.gen-orb {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 28px;
+}
+.gen-orb-inner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, var(--color-primary), #7c3aed);
+  box-shadow: 0 0 40px color-mix(in srgb, var(--color-primary) 50%, transparent);
+  animation: orbPulse 2s ease-in-out infinite;
+}
+.gen-orb-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  animation: orbRing 2s ease-in-out infinite;
+}
+.gen-orb-ring-2 {
+  inset: -24px;
+  border-color: color-mix(in srgb, var(--color-primary) 15%, transparent);
+  animation-delay: 0.4s;
+}
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 40px color-mix(in srgb, var(--color-primary) 50%, transparent); }
+  50% { transform: scale(1.06); box-shadow: 0 0 60px color-mix(in srgb, var(--color-primary) 70%, transparent); }
+}
+@keyframes orbRing {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+}
+.gen-progress-track {
+  width: 100%;
+  max-width: 320px;
+  margin: 20px auto 24px;
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.gen-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 100px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.gen-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 320px;
+  margin: 0 auto;
+  text-align: left;
+}
+.gen-step-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color 0.3s ease;
+}
+.gen-step-row.active {
+  color: var(--color-primary);
+}
+.gen-step-row.done {
+  color: var(--color-text);
+}
+.gsr-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+.gen-step-row.active .gsr-dot {
+  background: var(--color-primary);
+  box-shadow: 0 0 6px var(--color-primary);
+  animation: dotPulse 1s ease infinite;
+}
+.gen-step-row.done .gsr-dot {
+  background: #22c55e;
+}
+@keyframes dotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Premium Checkout Preview ── */
+.checkout-ready-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: color-mix(in srgb, #22c55e 12%, transparent);
+  color: #16a34a;
+  border: 1px solid color-mix(in srgb, #22c55e 30%, transparent);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+[data-theme="dark"] .checkout-ready-badge {
+  background: color-mix(in srgb, #22c55e 15%, transparent);
+  color: #4ade80;
+  border-color: color-mix(in srgb, #22c55e 25%, transparent);
+}
+.checkout-preview-blur {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  overflow: hidden;
+  text-align: left;
+}
+.cpb-section {
+  margin-bottom: 16px;
+  filter: blur(3.5px);
+  user-select: none;
+  pointer-events: none;
+}
+.cpb-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+.cpb-line {
+  height: 10px;
+  background: var(--color-border);
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+.cpb-line.long { width: 90%; }
+.cpb-line.medium { width: 65%; }
+.cpb-line.short { width: 45%; }
+.cpb-lock-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-bg) 40%, transparent);
+  gap: 8px;
+  filter: none !important;
+}
+.cpb-lock-icon { font-size: 28px; }
+.cpb-lock-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.checkout-what-mini {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.checkout-what-mini span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--color-surface));
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+}

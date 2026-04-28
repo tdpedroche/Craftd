@@ -104,6 +104,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       stepLabel.textContent = 'Building your playbook…';
       backBtn.style.visibility = 'hidden';
       quizNav.style.display = 'none';
+      startGeneratingAnimation();
       return;
     }
 
@@ -144,12 +145,12 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     });
   }
 
-  // Quiz option selection — auto-advance
+  // Quiz option selection — auto-advance (supports both .quiz-option and .quiz-option-card)
   document.querySelectorAll('.quiz-options').forEach(optGroup => {
     optGroup.addEventListener('click', (e) => {
-      const option = e.target.closest('.quiz-option');
+      const option = e.target.closest('.quiz-option, .quiz-option-card');
       if (!option) return;
-      optGroup.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+      optGroup.querySelectorAll('.quiz-option, .quiz-option-card').forEach(o => o.classList.remove('selected'));
       option.classList.add('selected');
       const name = optGroup.dataset.name;
       answers[name] = option.dataset.value;
@@ -277,26 +278,81 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     });
   }
 
-  // Animate generating step labels progressively
+  // Animate generating step labels progressively (legacy — kept for safety)
   function animateGenSteps() {
-    const steps = ['gen-step-1','gen-step-2','gen-step-3','gen-step-4'];
-    let i = 0;
-    // Reset all
-    steps.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.classList.remove('active','done'); }
-    });
-    if (steps[0]) document.getElementById(steps[0])?.classList.add('active');
+    // Delegate to the new premium animation
+    startGeneratingAnimation();
+  }
 
-    const interval = setInterval(() => {
-      if (i < steps.length - 1) {
-        document.getElementById(steps[i])?.classList.replace('active','done');
-        i++;
-        document.getElementById(steps[i])?.classList.add('active');
+  // Interval IDs for generating animation — stored so they can be cleared
+  let _genProgressInterval = null;
+  let _genStepInterval = null;
+  let _genTitleInterval = null;
+
+  function startGeneratingAnimation() {
+    // Clear any previous animation intervals
+    if (_genProgressInterval) clearInterval(_genProgressInterval);
+    if (_genStepInterval) clearInterval(_genStepInterval);
+    if (_genTitleInterval) clearInterval(_genTitleInterval);
+
+    const progressFill = document.getElementById('gen-progress-fill');
+    const cyclingTitle = document.getElementById('gen-cycling-title');
+    const rowIds = ['gsr-1', 'gsr-2', 'gsr-3', 'gsr-4', 'gsr-5'];
+
+    // Reset progress bar
+    if (progressFill) progressFill.style.width = '0%';
+
+    // Reset all step rows to pending
+    rowIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('active', 'done'); el.classList.add('pending'); }
+    });
+
+    // Activate first row immediately
+    const firstRow = document.getElementById(rowIds[0]);
+    if (firstRow) { firstRow.classList.remove('pending'); firstRow.classList.add('active'); }
+
+    // Progress bar: animate 0→85% over 25 seconds
+    const totalDuration = 25000; // 25s
+    const targetPct = 85;
+    const tickMs = 200;
+    const totalTicks = totalDuration / tickMs;
+    let tick = 0;
+    _genProgressInterval = setInterval(() => {
+      tick++;
+      const pct = Math.min((tick / totalTicks) * targetPct, targetPct);
+      if (progressFill) progressFill.style.width = pct + '%';
+      if (tick >= totalTicks) clearInterval(_genProgressInterval);
+    }, tickMs);
+
+    // Step rows: advance every 5 seconds
+    let rowIndex = 0;
+    _genStepInterval = setInterval(() => {
+      const currentRow = document.getElementById(rowIds[rowIndex]);
+      if (currentRow) { currentRow.classList.remove('active'); currentRow.classList.add('done'); }
+      rowIndex++;
+      if (rowIndex < rowIds.length) {
+        const nextRow = document.getElementById(rowIds[rowIndex]);
+        if (nextRow) { nextRow.classList.remove('pending'); nextRow.classList.add('active'); }
       } else {
-        clearInterval(interval);
+        clearInterval(_genStepInterval);
       }
-    }, 6000);
+    }, 5000);
+
+    // Cycling title messages every 5 seconds
+    const titles = [
+      'Analyzing your answers…',
+      'Building your workflow…',
+      'Writing your prompts…',
+      'Crafting your 30-day plan…',
+      'Putting it all together…',
+    ];
+    let titleIndex = 0;
+    _genTitleInterval = setInterval(() => {
+      titleIndex = (titleIndex + 1) % titles.length;
+      if (cyclingTitle) cyclingTitle.textContent = titles[titleIndex];
+      if (titleIndex === titles.length - 1) clearInterval(_genTitleInterval);
+    }, 5000);
   }
 
   // Initialize

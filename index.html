@@ -344,121 +344,274 @@
           <!-- Step 1 -->
           <div class="quiz-step active" data-step="1">
             <h3 class="quiz-q">What's your #1 goal with AI?</h3>
-            <div class="quiz-options" data-name="goal">
-              <button class="quiz-option" data-value="make-money">💰 Start or grow a side income stream</button>
-              <button class="quiz-option" data-value="save-time">⏱ Get hours of my week back</button>
-              <button class="quiz-option" data-value="learn-skills">📚 Build skills that make me more valuable</button>
-              <button class="quiz-option" data-value="daily-life">🏡 Make everyday life easier and less chaotic</button>
-              <button class="quiz-option" data-value="career-growth">📈 Advance my career or get a better job</button>
+            <div class="quiz-options card-grid" data-name="goal">
+              <button class="quiz-option-card" data-value="make-money">
+                <span class="card-icon">💰</span>
+                <span class="card-label">Start or grow a side income stream</span>
+              </button>
+              <button class="quiz-option-card" data-value="save-time">
+                <span class="card-icon">⏱</span>
+                <span class="card-label">Get hours of my week back</span>
+              </button>
+              <button class="quiz-option-card" data-value="learn-skills">
+                <span class="card-icon">📚</span>
+                <span class="card-label">Build skills that make me more valuable</span>
+              </button>
+              <button class="quiz-option-card" data-value="daily-life">
+                <span class="card-icon">🏡</span>
+                <span class="card-label">Make everyday life easier and less chaotic</span>
+              </button>
+              <button class="quiz-option-card" data-value="career-growth">
+                <span class="card-icon">📈</span>
+                <span class="card-label">Advance my career or get a better job</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 2 -->
           <div class="quiz-step" data-step="2">
             <h3 class="quiz-q">What best describes your current situation?</h3>
-            <div class="quiz-options" data-name="role">
-              <button class="quiz-option" data-value="employee">💼 Full-time employee at a company</button>
-              <button class="quiz-option" data-value="freelancer">🧑‍💻 Freelancer, consultant, or contractor</button>
-              <button class="quiz-option" data-value="business-owner">🏢 Business owner or entrepreneur</button>
-              <button class="quiz-option" data-value="student">🎓 Student or recent graduate</button>
-              <button class="quiz-option" data-value="parent-homemaker">🏡 Stay-at-home parent or caregiver</button>
-              <button class="quiz-option" data-value="job-seeker">🔎 Job seeker or career changer</button>
+            <div class="quiz-options card-grid" data-name="role">
+              <button class="quiz-option-card" data-value="employee">
+                <span class="card-icon">💼</span>
+                <span class="card-label">Full-time employee at a company</span>
+              </button>
+              <button class="quiz-option-card" data-value="freelancer">
+                <span class="card-icon">🧑‍💻</span>
+                <span class="card-label">Freelancer, consultant, or contractor</span>
+              </button>
+              <button class="quiz-option-card" data-value="business-owner">
+                <span class="card-icon">🏢</span>
+                <span class="card-label">Business owner or entrepreneur</span>
+              </button>
+              <button class="quiz-option-card" data-value="student">
+                <span class="card-icon">🎓</span>
+                <span class="card-label">Student or recent graduate</span>
+              </button>
+              <button class="quiz-option-card" data-value="parent-homemaker">
+                <span class="card-icon">🏡</span>
+                <span class="card-label">Stay-at-home parent or caregiver</span>
+              </button>
+              <button class="quiz-option-card" data-value="job-seeker">
+                <span class="card-icon">🔎</span>
+                <span class="card-label">Job seeker or career changer</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 3 -->
           <div class="quiz-step" data-step="3">
             <h3 class="quiz-q">What's your biggest struggle right now?</h3>
-            <div class="quiz-options" data-name="pain">
-              <button class="quiz-option" data-value="overwhelmed">😰 Too many options — I don't know where to start</button>
-              <button class="quiz-option" data-value="no-time">⏳ I'm always busy but never feel productive</button>
-              <button class="quiz-option" data-value="stuck">🧱 I know what I want but can't seem to move forward</button>
-              <button class="quiz-option" data-value="results">📊 I try things but nothing seems to actually work</button>
-              <button class="quiz-option" data-value="consistency">🔄 I start strong but struggle to stay consistent</button>
+            <div class="quiz-options card-grid" data-name="pain">
+              <button class="quiz-option-card" data-value="overwhelmed">
+                <span class="card-icon">😰</span>
+                <span class="card-label">Too many options — I don't know where to start</span>
+              </button>
+              <button class="quiz-option-card" data-value="no-time">
+                <span class="card-icon">⏳</span>
+                <span class="card-label">I'm always busy but never feel productive</span>
+              </button>
+              <button class="quiz-option-card" data-value="stuck">
+                <span class="card-icon">🧱</span>
+                <span class="card-label">I know what I want but can't seem to move forward</span>
+              </button>
+              <button class="quiz-option-card" data-value="results">
+                <span class="card-icon">📊</span>
+                <span class="card-label">I try things but nothing seems to actually work</span>
+              </button>
+              <button class="quiz-option-card" data-value="consistency">
+                <span class="card-icon">🔄</span>
+                <span class="card-label">I start strong but struggle to stay consistent</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 4 -->
           <div class="quiz-step" data-step="4">
             <h3 class="quiz-q">Where does most of your time go that you wish it didn't?</h3>
-            <div class="quiz-options" data-name="time-drain">
-              <button class="quiz-option" data-value="emails-messages">📧 Emails, messages, and back-and-forth communication</button>
-              <button class="quiz-option" data-value="research-planning">🔍 Looking things up, researching, and making decisions</button>
-              <button class="quiz-option" data-value="content-writing">✍️ Writing — posts, reports, scripts, or documents</button>
-              <button class="quiz-option" data-value="admin-tasks">📋 Scheduling, organizing, and repetitive busywork</button>
-              <button class="quiz-option" data-value="client-work">👥 Client or customer requests and follow-ups</button>
+            <div class="quiz-options card-grid" data-name="time-drain">
+              <button class="quiz-option-card" data-value="emails-messages">
+                <span class="card-icon">📧</span>
+                <span class="card-label">Emails, messages, and back-and-forth communication</span>
+              </button>
+              <button class="quiz-option-card" data-value="research-planning">
+                <span class="card-icon">🔍</span>
+                <span class="card-label">Looking things up, researching, and making decisions</span>
+              </button>
+              <button class="quiz-option-card" data-value="content-writing">
+                <span class="card-icon">✍️</span>
+                <span class="card-label">Writing — posts, reports, scripts, or documents</span>
+              </button>
+              <button class="quiz-option-card" data-value="admin-tasks">
+                <span class="card-icon">📋</span>
+                <span class="card-label">Scheduling, organizing, and repetitive busywork</span>
+              </button>
+              <button class="quiz-option-card" data-value="client-work">
+                <span class="card-icon">👥</span>
+                <span class="card-label">Client or customer requests and follow-ups</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 5 -->
           <div class="quiz-step" data-step="5">
             <h3 class="quiz-q">How would you describe your AI experience?</h3>
-            <div class="quiz-options" data-name="experience">
-              <button class="quiz-option" data-value="none">🌱 Zero — I've never really used it</button>
-              <button class="quiz-option" data-value="little">🔰 Minimal — I've played around with ChatGPT once or twice</button>
-              <button class="quiz-option" data-value="some">🔁 Casual — I use it here and there but not consistently</button>
-              <button class="quiz-option" data-value="regular">⚡ Regular — it's already part of my routine</button>
-              <button class="quiz-option" data-value="advanced">🧠 Advanced — I use multiple tools and write my own prompts</button>
+            <div class="quiz-options card-grid" data-name="experience">
+              <button class="quiz-option-card" data-value="none">
+                <span class="card-icon">🌱</span>
+                <span class="card-label">Zero — I've never really used it</span>
+              </button>
+              <button class="quiz-option-card" data-value="little">
+                <span class="card-icon">🔰</span>
+                <span class="card-label">Minimal — I've played around with ChatGPT once or twice</span>
+              </button>
+              <button class="quiz-option-card" data-value="some">
+                <span class="card-icon">🔁</span>
+                <span class="card-label">Casual — I use it here and there but not consistently</span>
+              </button>
+              <button class="quiz-option-card" data-value="regular">
+                <span class="card-icon">⚡</span>
+                <span class="card-label">Regular — it's already part of my routine</span>
+              </button>
+              <button class="quiz-option-card" data-value="advanced">
+                <span class="card-icon">🧠</span>
+                <span class="card-label">Advanced — I use multiple tools and write my own prompts</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 6 -->
           <div class="quiz-step" data-step="6">
             <h3 class="quiz-q">What have you actually tried with AI so far?</h3>
-            <div class="quiz-options" data-name="tried">
-              <button class="quiz-option" data-value="nothing">🚫 Absolutely nothing — starting from zero</button>
-              <button class="quiz-option" data-value="basic-questions">💬 Chatted with it or asked simple questions</button>
-              <button class="quiz-option" data-value="work-tasks">🛠 Used it to help with a real work task</button>
-              <button class="quiz-option" data-value="multiple-tools">🔧 Explored several tools like ChatGPT, Midjourney, etc.</button>
-              <button class="quiz-option" data-value="built-workflow">⚙️ Built part of my workflow around AI already</button>
+            <div class="quiz-options card-grid" data-name="tried">
+              <button class="quiz-option-card" data-value="nothing">
+                <span class="card-icon">🚫</span>
+                <span class="card-label">Absolutely nothing — starting from zero</span>
+              </button>
+              <button class="quiz-option-card" data-value="basic-questions">
+                <span class="card-icon">💬</span>
+                <span class="card-label">Chatted with it or asked simple questions</span>
+              </button>
+              <button class="quiz-option-card" data-value="work-tasks">
+                <span class="card-icon">🛠</span>
+                <span class="card-label">Used it to help with a real work task</span>
+              </button>
+              <button class="quiz-option-card" data-value="multiple-tools">
+                <span class="card-icon">🔧</span>
+                <span class="card-label">Explored several tools like ChatGPT, Midjourney, etc.</span>
+              </button>
+              <button class="quiz-option-card" data-value="built-workflow">
+                <span class="card-icon">⚙️</span>
+                <span class="card-label">Built part of my workflow around AI already</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 7 -->
           <div class="quiz-step" data-step="7">
             <h3 class="quiz-q">Which area do you most want AI to transform?</h3>
-            <div class="quiz-options" data-name="usecase">
-              <button class="quiz-option" data-value="writing">✍️ Writing — emails, content, copy, captions, scripts</button>
-              <button class="quiz-option" data-value="business">🏢 Business — strategy, planning, research, analysis</button>
-              <button class="quiz-option" data-value="creative">🎨 Creative — design, music, video, ideas, storytelling</button>
-              <button class="quiz-option" data-value="personal">🌿 Personal growth — habits, learning, health, finance</button>
-              <button class="quiz-option" data-value="income">💸 Making money — freelancing, selling, or side hustles</button>
+            <div class="quiz-options card-grid" data-name="usecase">
+              <button class="quiz-option-card" data-value="writing">
+                <span class="card-icon">✍️</span>
+                <span class="card-label">Writing — emails, content, copy, captions, scripts</span>
+              </button>
+              <button class="quiz-option-card" data-value="business">
+                <span class="card-icon">🏢</span>
+                <span class="card-label">Business — strategy, planning, research, analysis</span>
+              </button>
+              <button class="quiz-option-card" data-value="creative">
+                <span class="card-icon">🎨</span>
+                <span class="card-label">Creative — design, music, video, ideas, storytelling</span>
+              </button>
+              <button class="quiz-option-card" data-value="personal">
+                <span class="card-icon">🌿</span>
+                <span class="card-label">Personal growth — habits, learning, health, finance</span>
+              </button>
+              <button class="quiz-option-card" data-value="income">
+                <span class="card-icon">💸</span>
+                <span class="card-label">Making money — freelancing, selling, or side hustles</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 8 -->
           <div class="quiz-step" data-step="8">
             <h3 class="quiz-q">How much time can you realistically give AI each day?</h3>
-            <div class="quiz-options" data-name="time">
-              <button class="quiz-option" data-value="5-10">⚡ Under 10 minutes — I need fast wins only</button>
-              <button class="quiz-option" data-value="15-30">🕐 15–30 minutes — I can build a real habit</button>
-              <button class="quiz-option" data-value="30-60">🕑 30–60 minutes — I want meaningful progress</button>
-              <button class="quiz-option" data-value="60+">🔥 An hour or more — I'm going all in</button>
-              <button class="quiz-option" data-value="varies">🎲 It varies — some days a lot, some days nothing</button>
+            <div class="quiz-options card-grid" data-name="time">
+              <button class="quiz-option-card" data-value="5-10">
+                <span class="card-icon">⚡</span>
+                <span class="card-label">Under 10 minutes — I need fast wins only</span>
+              </button>
+              <button class="quiz-option-card" data-value="15-30">
+                <span class="card-icon">🕐</span>
+                <span class="card-label">15–30 minutes — I can build a real habit</span>
+              </button>
+              <button class="quiz-option-card" data-value="30-60">
+                <span class="card-icon">🕑</span>
+                <span class="card-label">30–60 minutes — I want meaningful progress</span>
+              </button>
+              <button class="quiz-option-card" data-value="60+">
+                <span class="card-icon">🔥</span>
+                <span class="card-label">An hour or more — I'm going all in</span>
+              </button>
+              <button class="quiz-option-card" data-value="varies">
+                <span class="card-icon">🎲</span>
+                <span class="card-label">It varies — some days a lot, some days nothing</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 9 -->
           <div class="quiz-step" data-step="9">
             <h3 class="quiz-q">In 90 days, what would make you say "AI changed my life"?</h3>
-            <div class="quiz-options" data-name="success">
-              <button class="quiz-option" data-value="save-10hrs">⏱ Getting back 10+ hours a month I was wasting</button>
-              <button class="quiz-option" data-value="earn-more">💵 Making real extra money I wasn't making before</button>
-              <button class="quiz-option" data-value="feel-confident">💪 Feeling smarter and more capable than my peers</button>
-              <button class="quiz-option" data-value="less-stress">😌 Actually feeling calm, focused, and in control</button>
-              <button class="quiz-option" data-value="career-win">🚀 Landing a promotion, client, or opportunity I couldn't before</button>
+            <div class="quiz-options card-grid" data-name="success">
+              <button class="quiz-option-card" data-value="save-10hrs">
+                <span class="card-icon">⏱</span>
+                <span class="card-label">Getting back 10+ hours a month I was wasting</span>
+              </button>
+              <button class="quiz-option-card" data-value="earn-more">
+                <span class="card-icon">💵</span>
+                <span class="card-label">Making real extra money I wasn't making before</span>
+              </button>
+              <button class="quiz-option-card" data-value="feel-confident">
+                <span class="card-icon">💪</span>
+                <span class="card-label">Feeling smarter and more capable than my peers</span>
+              </button>
+              <button class="quiz-option-card" data-value="less-stress">
+                <span class="card-icon">😌</span>
+                <span class="card-label">Actually feeling calm, focused, and in control</span>
+              </button>
+              <button class="quiz-option-card" data-value="career-win">
+                <span class="card-icon">🚀</span>
+                <span class="card-label">Landing a promotion, client, or opportunity I couldn't before</span>
+              </button>
             </div>
           </div>
 
           <!-- Step 10 -->
           <div class="quiz-step" data-step="10">
             <h3 class="quiz-q">How do you learn best?</h3>
-            <div class="quiz-options" data-name="learning-style">
-              <button class="quiz-option" data-value="step-by-step">📝 Give me exact steps I can follow without thinking</button>
-              <button class="quiz-option" data-value="examples">💡 Show me real examples I can copy and tweak</button>
-              <button class="quiz-option" data-value="just-start">🚀 Point me at the tool and let me experiment</button>
-              <button class="quiz-option" data-value="big-picture">🗺️ Help me understand the big picture before the details</button>
-              <button class="quiz-option" data-value="accountability">✅ Give me a checklist or plan I can hold myself to</button>
+            <div class="quiz-options card-grid" data-name="learning-style">
+              <button class="quiz-option-card" data-value="step-by-step">
+                <span class="card-icon">📝</span>
+                <span class="card-label">Give me exact steps I can follow without thinking</span>
+              </button>
+              <button class="quiz-option-card" data-value="examples">
+                <span class="card-icon">💡</span>
+                <span class="card-label">Show me real examples I can copy and tweak</span>
+              </button>
+              <button class="quiz-option-card" data-value="just-start">
+                <span class="card-icon">🚀</span>
+                <span class="card-label">Point me at the tool and let me experiment</span>
+              </button>
+              <button class="quiz-option-card" data-value="big-picture">
+                <span class="card-icon">🗺️</span>
+                <span class="card-label">Help me understand the big picture before the details</span>
+              </button>
+              <button class="quiz-option-card" data-value="accountability">
+                <span class="card-icon">✅</span>
+                <span class="card-label">Give me a checklist or plan I can hold myself to</span>
+              </button>
             </div>
           </div>
 
@@ -492,14 +645,22 @@
           <!-- Step: Generating -->
           <div class="quiz-step" data-step="generating">
             <div class="generating-state">
-              <div class="gen-spinner"></div>
-              <h3 class="gen-title">Building your playbook…</h3>
-              <p class="gen-sub">Our AI is creating a personalized system based on your answers. This takes about 10–15 seconds.</p>
-              <div class="gen-steps">
-                <div class="gen-step active" id="gen-step-1">✦ Analyzing your goals and pain points</div>
-                <div class="gen-step" id="gen-step-2">✦ Crafting your daily workflow</div>
-                <div class="gen-step" id="gen-step-3">✦ Writing your copy-paste prompts</div>
-                <div class="gen-step" id="gen-step-4">✦ Building your action plan</div>
+              <div class="gen-orb">
+                <div class="gen-orb-inner"></div>
+                <div class="gen-orb-ring"></div>
+                <div class="gen-orb-ring gen-orb-ring-2"></div>
+              </div>
+              <h3 class="gen-title" id="gen-cycling-title">Analyzing your answers…</h3>
+              <p class="gen-sub">Your personalized AI playbook is being crafted. This takes about 20–30 seconds.</p>
+              <div class="gen-progress-track">
+                <div class="gen-progress-fill" id="gen-progress-fill"></div>
+              </div>
+              <div class="gen-steps-list" id="gen-steps-list">
+                <div class="gen-step-row pending" id="gsr-1"><span class="gsr-dot"></span> Analyzing your goals and situation</div>
+                <div class="gen-step-row pending" id="gsr-2"><span class="gsr-dot"></span> Building your daily AI workflow</div>
+                <div class="gen-step-row pending" id="gsr-3"><span class="gsr-dot"></span> Writing your 15 copy-paste prompts</div>
+                <div class="gen-step-row pending" id="gsr-4"><span class="gsr-dot"></span> Crafting your 30-day action plan</div>
+                <div class="gen-step-row pending" id="gsr-5"><span class="gsr-dot"></span> Finalizing your playbook</div>
               </div>
             </div>
           </div>
@@ -507,21 +668,41 @@
           <!-- Step: Checkout -->
           <div class="quiz-step" data-step="checkout">
             <div class="checkout-state">
-              <div class="checkout-icon">🎉</div>
-              <h3 class="checkout-title">Your playbook is ready!</h3>
-              <p class="checkout-sub">We've built your personalized AI playbook. Unlock it now for a one-time payment of <strong>$37</strong>.</p>
-              <div class="checkout-what">
-                <div class="checkout-item">✓ Full personalized AI playbook</div>
-                <div class="checkout-item">✓ 15 copy-paste prompts built for your situation</div>
-                <div class="checkout-item">✓ Your personalized daily AI workflow</div>
-                <div class="checkout-item">✓ Full 30-day action plan</div>
-                <div class="checkout-item">✓ Recommended tools for your exact use case</div>
-                <div class="checkout-item">✓ What to avoid as a beginner</div>
+              <div class="checkout-ready-badge">✦ Your playbook is ready</div>
+              <h3 class="checkout-title">Here's a preview of what's inside</h3>
+              <div class="checkout-preview-blur">
+                <div class="cpb-section">
+                  <div class="cpb-section-title">📋 Your Daily AI Workflow</div>
+                  <div class="cpb-line long"></div>
+                  <div class="cpb-line medium"></div>
+                  <div class="cpb-line short"></div>
+                </div>
+                <div class="cpb-section">
+                  <div class="cpb-section-title">⚡ Prompt #1: [Your situation]</div>
+                  <div class="cpb-line long"></div>
+                  <div class="cpb-line medium"></div>
+                </div>
+                <div class="cpb-section">
+                  <div class="cpb-section-title">📅 Week 1 Action Plan</div>
+                  <div class="cpb-line medium"></div>
+                  <div class="cpb-line long"></div>
+                  <div class="cpb-line short"></div>
+                </div>
+                <div class="cpb-lock-overlay">
+                  <div class="cpb-lock-icon">🔒</div>
+                  <div class="cpb-lock-text">Unlock your full playbook below</div>
+                </div>
+              </div>
+              <div class="checkout-what-mini">
+                <span>✓ 15 prompts</span>
+                <span>✓ 30-day plan</span>
+                <span>✓ Daily workflow</span>
+                <span>✓ Tools guide</span>
               </div>
               <a href="#" id="checkout-btn" class="btn btn-primary btn-lg checkout-cta" data-testid="button-checkout">
                 Unlock My Playbook — $37 →
               </a>
-              <p class="checkout-note">Secure payment · Instant access · No subscription</p>
+              <p class="checkout-note">One-time payment · Instant access · No subscription</p>
             </div>
           </div>
 
@@ -596,7 +777,7 @@
     </div>
   </footer>
 
-  <script src="script.js?v=13"></script>
+  <script src="script.js?v=14"></script>
   <script>
     // Show "Return to my playbook" banner if they've already paid
     // Validates the session is still alive before showing
