@@ -353,12 +353,17 @@ button {
   text-decoration: none;
 }
 
-.logo-mark { flex-shrink: 0; }
+.logo-mark {
+  flex-shrink: 0;
+  width: 48px !important;
+  height: 48px !important;
+  object-fit: contain;
+}
 
 .logo-text {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   letter-spacing: -0.01em;
   color: var(--color-text);
 }
