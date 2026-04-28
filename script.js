@@ -312,8 +312,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     const firstRow = document.getElementById(rowIds[0]);
     if (firstRow) { firstRow.classList.remove('pending'); firstRow.classList.add('active'); }
 
-    // Progress bar: animate 0→85% over 25 seconds
-    const totalDuration = 25000; // 25s
+    // Progress bar: animate 0→85% over 75 seconds (real gen time ~60-90s)
+    const totalDuration = 75000; // 75s
     const targetPct = 85;
     const tickMs = 200;
     const totalTicks = totalDuration / tickMs;
@@ -325,7 +325,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       if (tick >= totalTicks) clearInterval(_genProgressInterval);
     }, tickMs);
 
-    // Step rows: advance every 5 seconds
+    // Step rows: advance every 15 seconds (5 steps × 15s = 75s)
     let rowIndex = 0;
     _genStepInterval = setInterval(() => {
       const currentRow = document.getElementById(rowIds[rowIndex]);
@@ -337,9 +337,9 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       } else {
         clearInterval(_genStepInterval);
       }
-    }, 5000);
+    }, 15000);
 
-    // Cycling title messages every 5 seconds
+    // Cycling title messages every 15 seconds
     const titles = [
       'Analyzing your answers…',
       'Building your workflow…',
@@ -352,7 +352,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
       titleIndex = (titleIndex + 1) % titles.length;
       if (cyclingTitle) cyclingTitle.textContent = titles[titleIndex];
       if (titleIndex === titles.length - 1) clearInterval(_genTitleInterval);
-    }, 5000);
+    }, 15000);
   }
 
   // Initialize
