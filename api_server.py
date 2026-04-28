@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
-DB_PATH = "/tmp/craftd.db"
+DB_PATH = "/tmp/plaax.db"
 
 def get_db():
     db = sqlite3.connect(DB_PATH, check_same_thread=False)
@@ -121,7 +121,7 @@ def build_prompt(answers):
     success  = SUCCESS_LABELS.get(answers.get("success",""), answers.get("success",""))
     learning = LEARNING_LABELS.get(answers.get("learning_style",""), answers.get("learning_style",""))
     return (
-        "You are Craftd, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
+        "You are Plaax, an AI coach that creates deeply personalized AI playbooks for everyday people.\n\n"
         "Generate a complete, highly personalized AI playbook for someone with this exact profile:\n"
         + (("- First name: " + answers.get("first_name","").strip() + "\n") if answers.get("first_name","").strip() else "")
         + "- Life situation: They are " + role + "\n"

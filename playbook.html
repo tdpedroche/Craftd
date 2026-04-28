@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your AI Playbook — Craftd</title>
+  <title>Your AI Playbook — Plaax</title>
   <meta name="robots" content="noindex" />
   <link href="https://api.fontshare.com/v2/css?f[]=chillax@300,400,500,600,700&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
@@ -632,14 +632,14 @@
 
   <header class="nav" id="nav">
     <div class="nav-inner container">
-      <a href="index.html" class="logo" aria-label="Craftd home">
+      <a href="index.html" class="logo" aria-label="Plaax home">
         <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="3" fill="var(--color-primary)"/>
           <rect x="18" y="2" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
           <rect x="2" y="18" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
           <rect x="18" y="18" width="12" height="12" rx="3" fill="var(--color-accent)"/>
         </svg>
-        <span class="logo-text">Craftd</span>
+        <span class="logo-text">Plaax</span>
       </a>
       <div class="nav-actions">
         <button class="theme-toggle" data-theme-toggle aria-label="Toggle dark mode">
@@ -699,7 +699,7 @@
           <span class="nav-icon">🖨</span> Print / Save PDF
         </button>
         <a class="pb-nav-link" href="index.html">
-          <span class="nav-icon">←</span> Back to Craftd
+          <span class="nav-icon">←</span> Back to Plaax
         </a>
       </div>
     </aside>
@@ -1049,7 +1049,7 @@
     const el = document.getElementById(id);
     el.classList.toggle('checked');
     // persist to localStorage
-    const key = 'craftd_days';
+    const key = 'plaax_days';
     const saved = JSON.parse(localStorage.getItem(key) || '{}');
     saved[id] = el.classList.contains('checked');
     localStorage.setItem(key, JSON.stringify(saved));
@@ -1057,7 +1057,7 @@
 
   // Restore checked days
   function restoreDays() {
-    const saved = JSON.parse(localStorage.getItem('craftd_days') || '{}');
+    const saved = JSON.parse(localStorage.getItem('plaax_days') || '{}');
     for (const [id, checked] of Object.entries(saved)) {
       const el = document.getElementById(id);
       if (el && checked) el.classList.add('checked');
@@ -1163,12 +1163,12 @@
     const params = new URLSearchParams(location.search);
     let sessionId = params.get('session_id');
     if (sessionId) {
-      localStorage.setItem('craftd_session_id', sessionId);
+      localStorage.setItem('plaax_session_id', sessionId);
     } else {
-      sessionId = localStorage.getItem('craftd_session_id');
+      sessionId = localStorage.getItem('plaax_session_id');
     }
     if (!sessionId) {
-      showError('No session ID found. Please check your email or return to Craftd.');
+      showError('No session ID found. Please check your email or return to Plaax.');
       return;
     }
     try {
@@ -1177,8 +1177,8 @@
         const err = await res.json().catch(() => ({}));
         if (res.status === 404) {
           // Session gone (DB reset after redeploy) — clear stale localStorage
-          localStorage.removeItem('craftd_session_id');
-          localStorage.removeItem('craftd_days');
+          localStorage.removeItem('plaax_session_id');
+          localStorage.removeItem('plaax_days');
           showError('Your session has expired. Please take the quiz again — it only takes 3 minutes.');
         } else if (res.status === 402) {
           showError('Payment not yet confirmed. If you just paid, please wait a few seconds and refresh.');

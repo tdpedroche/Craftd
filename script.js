@@ -1,5 +1,5 @@
 /* =========================================
-   CRAFTD — MAIN SCRIPT
+   PLAAX — MAIN SCRIPT
    Dark mode + Nav + Scroll reveal + Quiz
    ========================================= */
 

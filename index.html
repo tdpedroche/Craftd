@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Craftd — Your Personal AI Playbook</title>
-  <meta name="description" content="Craftd creates a personalized AI playbook based on your goals, lifestyle, and experience level. Stop guessing — start using AI today." />
-  <meta property="og:title" content="Craftd — Your Personal AI Playbook" />
+  <title>Plaax — Your Personal AI Playbook</title>
+  <meta name="description" content="Plaax creates a personalized AI playbook based on your goals, lifestyle, and experience level. Stop guessing — start using AI today." />
+  <meta property="og:title" content="Plaax — Your Personal AI Playbook" />
   <meta property="og:description" content="A simple, step-by-step system to use AI in your real life. Built around you." />
   <meta property="og:type" content="website" />
 
@@ -19,14 +19,14 @@
   <!-- ======= NAV ======= -->
   <header class="nav" id="nav">
     <div class="nav-inner container">
-      <a href="#" class="logo" aria-label="Craftd home">
+      <a href="#" class="logo" aria-label="Plaax home">
         <svg class="logo-mark" width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
           <rect x="2" y="2" width="12" height="12" rx="3" fill="var(--color-primary)"/>
           <rect x="18" y="2" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
           <rect x="2" y="18" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
           <rect x="18" y="18" width="12" height="12" rx="3" fill="var(--color-accent)"/>
         </svg>
-        <span class="logo-text">Craftd</span>
+        <span class="logo-text">Plaax</span>
       </a>
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#how-it-works">How It Works</a>
@@ -141,7 +141,7 @@
       </div>
       <div class="bridge reveal">
         <div class="bridge-arrow">↓</div>
-        <p class="bridge-text">Craftd bridges the gap — from <strong>"I don't understand AI"</strong> to <strong>"I have a system I can actually use."</strong></p>
+        <p class="bridge-text">Plaax bridges the gap — from <strong>"I don't understand AI"</strong> to <strong>"I have a system I can actually use."</strong></p>
       </div>
     </div>
   </section>
@@ -171,7 +171,7 @@
           <div class="step-number">02</div>
           <div class="step-content">
             <h3>We build your personal playbook</h3>
-            <p>Based on your answers, Craftd generates a tailored system — not a generic guide. Your workflow, your prompts, your timeline.</p>
+            <p>Based on your answers, Plaax generates a tailored system — not a generic guide. Your workflow, your prompts, your timeline.</p>
           </div>
           <div class="step-visual step-visual-2">
             <div class="generating-bar">
@@ -284,7 +284,7 @@
     <div class="container">
       <div class="testimonials-inner">
         <blockquote class="testimonial reveal">
-          <p>"I've been putting off learning AI for a year. Craftd gave me a plan I actually understood. I used it the same day I got my playbook."</p>
+          <p>"I've been putting off learning AI for a year. Plaax gave me a plan I actually understood. I used it the same day I got my playbook."</p>
           <footer>
             <strong>Marcus T.</strong>
             <span>Sales manager, 34</span>
@@ -753,14 +753,14 @@
   <footer class="footer">
     <div class="container footer-inner">
       <div class="footer-brand">
-        <a href="#" class="logo" aria-label="Craftd home">
+        <a href="#" class="logo" aria-label="Plaax home">
           <svg class="logo-mark" width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true">
             <rect x="2" y="2" width="12" height="12" rx="3" fill="var(--color-primary)"/>
             <rect x="18" y="2" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
             <rect x="2" y="18" width="12" height="12" rx="3" fill="var(--color-primary)" opacity="0.5"/>
             <rect x="18" y="18" width="12" height="12" rx="3" fill="var(--color-accent)"/>
           </svg>
-          <span class="logo-text">Craftd</span>
+          <span class="logo-text">Plaax</span>
         </a>
         <p class="footer-tagline">Your personal AI playbook, built around your life.</p>
       </div>
@@ -772,7 +772,7 @@
     </div>
     <div class="footer-bottom">
       <div class="container">
-        <p>© 2026 Craftd. All rights reserved.</p>
+        <p>© 2026 Plaax. All rights reserved.</p>
       </div>
     </div>
   </footer>
@@ -782,15 +782,15 @@
     // Show "Return to my playbook" banner if they've already paid
     // Validates the session is still alive before showing
     (function() {
-      const sid = localStorage.getItem('craftd_session_id');
+      const sid = localStorage.getItem('plaax_session_id');
       if (!sid) return;
       // Silently verify the session still exists in the DB
       fetch('/api/playbook?session_id=' + encodeURIComponent(sid), { method: 'GET' })
         .then(res => {
           if (res.status === 404) {
             // Session is gone (DB reset) — clear stale localStorage
-            localStorage.removeItem('craftd_session_id');
-            localStorage.removeItem('craftd_days');
+            localStorage.removeItem('plaax_session_id');
+            localStorage.removeItem('plaax_days');
             return;
           }
           // Session exists (paid or 402) — show the banner
