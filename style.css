@@ -348,7 +348,7 @@ button {
 .logo {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: 6px;
   flex-shrink: 0;
   text-decoration: none;
 }
