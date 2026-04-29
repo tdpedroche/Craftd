@@ -178,7 +178,7 @@ def generate_and_save(lead_id, answers, email):
         anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", "")
         stripe_secret_key = os.environ.get("STRIPE_SECRET_KEY", "")
         stripe_price_id   = os.environ.get("STRIPE_PRICE_ID", "")
-        base_url          = os.environ.get("BASE_URL", "https://craftd.onrender.com").strip().rstrip("/")
+        base_url          = os.environ.get("BASE_URL", "https://www.getplaax.com").strip().rstrip("/")
 
         print("DEBUG generate_and_save called", flush=True)
         print("DEBUG base_url=" + base_url, flush=True)
