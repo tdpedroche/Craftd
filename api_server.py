@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 import json, os, sqlite3, threading
+try:
+    import psycopg2
+    import psycopg2.extras
+except ImportError:
+    psycopg2 = None
 from contextlib import asynccontextmanager
 from typing import Optional
 from dotenv import load_dotenv
@@ -13,29 +18,65 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 DB_PATH = "/tmp/plaax.db"
+DATABASE_URL = os.environ.get("DATABASE_URL", "")
+
+def _use_postgres():
+    return bool(DATABASE_URL and psycopg2)
 
 def get_db():
+    if _use_postgres():
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+        return conn
     db = sqlite3.connect(DB_PATH, check_same_thread=False)
     db.row_factory = sqlite3.Row
     return db
 
+def db_execute(conn, sql, params=()):
+    """Run a query, normalising SQLite vs Postgres placeholder syntax."""
+    if _use_postgres():
+        # Postgres uses %s placeholders; convert from ?
+        sql = sql.replace("?", "%s")
+        # Postgres uses SERIAL not AUTOINCREMENT
+        cur = conn.cursor()
+        cur.execute(sql, params)
+        return cur
+    return conn.execute(sql, params)
+
 def init_db():
-    db = get_db()
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS leads (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT NOT NULL,
-            first_name TEXT,
-            goal TEXT, role TEXT, pain TEXT, time_drain TEXT,
-            experience TEXT, tried TEXT, usecase TEXT,
-            time_available TEXT, success_vision TEXT,
-            playbook TEXT, stripe_session TEXT UNIQUE,
-            checkout_url TEXT, paid INTEGER DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    db.commit()
-    db.close()
+    conn = get_db()
+    if _use_postgres():
+        cur = conn.cursor()
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS leads (
+                id SERIAL PRIMARY KEY,
+                email TEXT NOT NULL,
+                first_name TEXT,
+                goal TEXT, role TEXT, pain TEXT, time_drain TEXT,
+                experience TEXT, tried TEXT, usecase TEXT,
+                time_available TEXT, success_vision TEXT,
+                playbook TEXT, stripe_session TEXT UNIQUE,
+                checkout_url TEXT, paid INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        conn.commit()
+        conn.close()
+    else:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS leads (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT NOT NULL,
+                first_name TEXT,
+                goal TEXT, role TEXT, pain TEXT, time_drain TEXT,
+                experience TEXT, tried TEXT, usecase TEXT,
+                time_available TEXT, success_vision TEXT,
+                playbook TEXT, stripe_session TEXT UNIQUE,
+                checkout_url TEXT, paid INTEGER DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        conn.commit()
+        conn.close()
 
 GOAL_LABELS = {
     "make-money":    "start or grow a side income stream",
@@ -220,10 +261,8 @@ def generate_and_save(lead_id, answers, email):
             paid = 1
 
         db = get_db()
-        db.execute(
-            "UPDATE leads SET playbook=?, stripe_session=?, checkout_url=?, paid=? WHERE id=?",
-            (playbook_text, stripe_session_id, checkout_url, paid, lead_id),
-        )
+        db_execute(db, "UPDATE leads SET playbook=?, stripe_session=?, checkout_url=?, paid=? WHERE id=?",
+            (playbook_text, stripe_session_id, checkout_url, paid, lead_id))
         db.commit()
         db.close()
         print("DEBUG DB updated successfully", flush=True)
@@ -231,7 +270,7 @@ def generate_and_save(lead_id, answers, email):
     except Exception as e:
         print("DEBUG ERROR: " + str(e), flush=True)
         db = get_db()
-        db.execute("UPDATE leads SET checkout_url=? WHERE id=?", ("error:" + str(e), lead_id))
+        db_execute(db, "UPDATE leads SET checkout_url=? WHERE id=?", ("error:" + str(e), lead_id))
         db.commit()
         db.close()
 
@@ -260,11 +299,19 @@ class SubmitRequest(BaseModel):
 @app.post("/api/submit")
 async def submit(body: SubmitRequest):
     db = get_db()
-    cursor = db.execute(
-        "INSERT INTO leads (email, first_name, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-        (body.email, body.first_name, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
-    )
-    lead_id = cursor.lastrowid
+    if _use_postgres():
+        cur = db.cursor()
+        cur.execute(
+            "INSERT INTO leads (email, first_name, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
+            (body.email, body.first_name, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
+        )
+        lead_id = cur.fetchone()["id"]
+    else:
+        cursor = db.execute(
+            "INSERT INTO leads (email, first_name, goal, role, pain, time_drain, experience, tried, usecase, time_available, success_vision) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (body.email, body.first_name, body.goal, body.role, body.pain, body.time_drain, body.experience, body.tried, body.usecase, body.time, body.success),
+        )
+        lead_id = cursor.lastrowid
     db.commit()
     db.close()
     answers = {"goal": body.goal, "role": body.role, "pain": body.pain, "time_drain": body.time_drain,
@@ -277,7 +324,7 @@ async def submit(body: SubmitRequest):
 @app.get("/api/status")
 async def get_status(pending_id: int):
     db = get_db()
-    row = db.execute("SELECT checkout_url FROM leads WHERE id=?", (pending_id,)).fetchone()
+    row = db_execute(db, "SELECT checkout_url FROM leads WHERE id=?", (pending_id,)).fetchone()
     db.close()
     if not row:
         raise HTTPException(status_code=404, detail="Not found.")
@@ -292,7 +339,7 @@ async def get_status(pending_id: int):
 async def get_playbook(session_id: str):
     stripe_secret_key = os.environ.get("STRIPE_SECRET_KEY", "")
     db = get_db()
-    row = db.execute("SELECT id, email, first_name, playbook, paid FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
+    row = db_execute(db, "SELECT id, email, first_name, playbook, paid FROM leads WHERE stripe_session=?", (session_id,)).fetchone()
     db.close()
     if not row:
         raise HTTPException(status_code=404, detail="Playbook not found.")
@@ -302,7 +349,7 @@ async def get_playbook(session_id: str):
             s = stripe.checkout.Session.retrieve(session_id)
             if s.payment_status == "paid":
                 db2 = get_db()
-                db2.execute("UPDATE leads SET paid=1 WHERE id=?", (row["id"],))
+                db_execute(db2, "UPDATE leads SET paid=1 WHERE id=?", (row["id"],))
                 db2.commit()
                 db2.close()
             else:
@@ -327,7 +374,7 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
     if event["type"] == "checkout.session.completed":
         sid = event["data"]["object"]["id"]
         db = get_db()
-        db.execute("UPDATE leads SET paid=1 WHERE stripe_session=?", (sid,))
+        db_execute(db, "UPDATE leads SET paid=1 WHERE stripe_session=?", (sid,))
         db.commit()
         db.close()
     return {"received": True}
