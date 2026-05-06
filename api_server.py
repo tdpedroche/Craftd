@@ -122,11 +122,17 @@ TRIED_LABELS = {
     "built-workflow":  "has already built part of their workflow around AI",
 }
 USECASE_LABELS = {
+    "emails-comms":      "emails and communication — drafting, replying, and summarizing messages",
+    "content-creation":  "content creation — social posts, captions, scripts, and blogs",
+    "research-decisions":"research and decisions — finding information, comparing options, and planning",
+    "business-ops":      "business tasks — reports, proposals, strategy, and client work",
+    "personal-life":     "personal life — habits, learning, health, finances, and daily planning",
+    "income":            "making money — freelancing, selling, or building a side hustle",
+    # legacy values
     "writing":  "writing — emails, content, copy, captions, and scripts",
     "business": "business — strategy, planning, research, and analysis",
     "creative": "creative — design, music, video, ideas, and storytelling",
     "personal": "personal growth — habits, learning, health, and finance",
-    "income":   "making money — freelancing, selling, or building side hustles",
 }
 TIME_LABELS = {
     "5-10":    "under 10 minutes a day",
@@ -168,17 +174,22 @@ def build_prompt(answers):
         + "- Life situation: They are " + role + "\n"
         "- Main goal: They want to " + goal + "\n"
         "- Biggest pain point: This person " + pain + "\n"
-        "- Biggest time drain: " + drain + "\n"
+        "- MOST IMPORTANT - Primary daily task they want AI to help with: " + usecase + "\n"
+        "- Biggest time drain right now: " + drain + "\n"
         "- AI experience level: They are " + exp + "\n"
         "- What they've already tried: This person " + tried + "\n"
-        "- Primary use area: " + usecase + "\n"
         "- Time available daily: " + time_av + " per day\n"
         "- 90-day success vision: They want to end up " + success + "\n"
         + (("- Learning style: This person " + learning + "\n") if learning else "")
         + "\n"
-        "Write a warm, encouraging, beginner-friendly playbook with these EXACT sections. "
-        "Make every single section deeply specific to this person's role, goal, and situation — "
-        "not generic advice. Use their exact context throughout.\n\n"
+        "CRITICAL INSTRUCTIONS:\n"
+        "1. Every prompt, workflow step, tool recommendation, and example MUST be specific to '" + usecase + "' and '" + drain + "'. "
+        "Do NOT recommend tools or write prompts for use cases they did not select.\n"
+        "2. If they selected emails/communication, ALL 15 prompts must be email or communication prompts. Zero social media content.\n"
+        "3. If they selected content creation, ALL 15 prompts must be content prompts. Zero email drafting templates.\n"
+        "4. Their job role is '" + role + "' — every example, prompt, and workflow step must reflect the real tasks someone in that role does.\n"
+        "5. Write in second person ('you') throughout. Warm, direct, no jargon.\n\n"
+        "Write the playbook with these EXACT sections:\n\n"
         "# Your Personal AI Playbook\n\n"
         "## How AI Fits Into Your Life\n"
         "3-4 sentences written directly to this person. Reference their specific role and goal. "
