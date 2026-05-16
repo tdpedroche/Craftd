@@ -18,14 +18,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 DB_PATH = "/tmp/plaax.db"
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
-
 def _use_postgres():
-    return bool(DATABASE_URL and psycopg2)
+    return bool(os.environ.get("DATABASE_URL", "") and psycopg2)
 
 def get_db():
+    database_url = os.environ.get("DATABASE_URL", "")
     if _use_postgres():
-        conn = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+        conn = psycopg2.connect(database_url, cursor_factory=psycopg2.extras.RealDictCursor)
         return conn
     db = sqlite3.connect(DB_PATH, check_same_thread=False)
     db.row_factory = sqlite3.Row
