@@ -392,11 +392,29 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
 
 @app.get("/api/health")
 async def health():
+    db_ok = False
+    db_type = "sqlite"
+    try:
+        conn = get_db()
+        if _use_postgres():
+            db_type = "postgres"
+            cur = conn.cursor()
+            cur.execute("SELECT 1")
+            cur.fetchone()
+        else:
+            conn.execute("SELECT 1")
+        conn.close()
+        db_ok = True
+    except Exception as e:
+        db_ok = False
+        db_type = str(e)
     return {
         "status": "ok",
         "stripe": bool(os.environ.get("STRIPE_SECRET_KEY")),
         "anthropic": bool(os.environ.get("ANTHROPIC_API_KEY")),
         "base_url": repr(os.environ.get("BASE_URL", "NOT SET")),
+        "database": db_ok,
+        "database_type": db_type,
     }
 
 # Serve static files
