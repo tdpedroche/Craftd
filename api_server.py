@@ -3,7 +3,12 @@ import json, os, sqlite3, threading
 try:
     import psycopg2
     import psycopg2.extras
-except ImportError:
+    print("DEBUG psycopg2 loaded successfully version="+psycopg2.__version__, flush=True)
+except ImportError as e:
+    print("DEBUG psycopg2 import failed: "+str(e), flush=True)
+    psycopg2 = None
+except Exception as e:
+    print("DEBUG psycopg2 unexpected error: "+str(e), flush=True)
     psycopg2 = None
 from contextlib import asynccontextmanager
 from typing import Optional
@@ -414,6 +419,8 @@ async def health():
         "base_url": repr(os.environ.get("BASE_URL", "NOT SET")),
         "database": db_ok,
         "database_type": db_type,
+        "database_url_set": bool(os.environ.get("DATABASE_URL", "")),
+        "psycopg2_loaded": psycopg2 is not None,
     }
 
 # Serve static files
