@@ -416,7 +416,7 @@ async def health():
         "status": "ok",
         "stripe": bool(os.environ.get("STRIPE_SECRET_KEY")),
         "anthropic": bool(os.environ.get("ANTHROPIC_API_KEY")),
-        "base_url": repr(os.environ.get("BASE_URL", "NOT SET")),
+        "base_url": os.environ.get("BASE_URL", "NOT SET"),
         "database": db_ok,
         "database_type": db_type,
         "database_url_set": bool(os.environ.get("DATABASE_URL", "")),
