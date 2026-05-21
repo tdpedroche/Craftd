@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 import stripe
+import resend
 from anthropic import Anthropic
 from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -228,6 +229,42 @@ def build_prompt(answers):
         "Every section must feel like it was written specifically for this person, not copy-pasted from a template."
     )
 
+def send_playbook_email(email: str, first_name: str, session_id: str):
+    """Send the playbook access email via Resend after payment confirmed."""
+    resend_api_key = os.environ.get("RESEND_API_KEY", "")
+    base_url       = os.environ.get("BASE_URL", "https://www.getplaax.com").strip().rstrip("/")
+    if not resend_api_key:
+        print("DEBUG send_playbook_email skipped — no RESEND_API_KEY", flush=True)
+        return
+    resend.api_key = resend_api_key
+    name      = first_name.strip() if first_name else "there"
+    playbook_url = f"{base_url}/playbook.html?session_id={session_id}"
+    html_body = f"""
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 580px; margin: 0 auto; background: #080D1C; color: #ffffff; padding: 40px 32px; border-radius: 12px;">
+      <div style="margin-bottom: 32px;">
+        <span style="font-size: 22px; font-weight: 700; letter-spacing: 0.05em;">✕ PLAAX</span>
+      </div>
+      <h1 style="font-size: 26px; font-weight: 700; margin: 0 0 16px; line-height: 1.3;">Your AI Playbook is ready, {name}.</h1>
+      <p style="color: #a0aec0; font-size: 16px; line-height: 1.6; margin: 0 0 32px;">Everything was built around your answers — your goals, your role, your schedule. This is yours.</p>
+      <a href="{playbook_url}" style="display: inline-block; background: linear-gradient(135deg, #7850FF, #4F8EFF); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 16px; padding: 16px 32px; border-radius: 8px; letter-spacing: 0.02em;">Open My Playbook →</a>
+      <p style="color: #718096; font-size: 14px; margin: 32px 0 0; line-height: 1.6;">Keep this email — it's your permanent link back to your playbook. If you have any issues, reply here and we'll sort it out.</p>
+      <hr style="border: none; border-top: 1px solid #1a2035; margin: 32px 0;" />
+      <p style="color: #4a5568; font-size: 13px; margin: 0;">Plaax · <a href="https://www.getplaax.com" style="color: #7850FF; text-decoration: none;">getplaax.com</a></p>
+    </div>
+    """
+    try:
+        params = {
+            "from": "Plaax <hello@getplaax.com>",
+            "to": [email],
+            "subject": f"Your Plaax playbook is ready, {name}",
+            "html": html_body,
+        }
+        resend.Emails.send(params)
+        print(f"DEBUG email sent to {email}", flush=True)
+    except Exception as e:
+        print(f"DEBUG email send failed: {e}", flush=True)
+
+
 def generate_and_save(lead_id, answers, email):
     try:
         # Read env vars fresh inside the thread
@@ -391,7 +428,15 @@ async def stripe_webhook(request: Request, stripe_signature: str = Header(None))
         db = get_db()
         db_execute(db, "UPDATE leads SET paid=1 WHERE stripe_session=?", (sid,))
         db.commit()
+        # Fetch name + email to send confirmation
+        row = db_execute(db, "SELECT email, first_name FROM leads WHERE stripe_session=?", (sid,)).fetchone()
         db.close()
+        if row:
+            threading.Thread(
+                target=send_playbook_email,
+                args=(row["email"], row["first_name"] or "", sid),
+                daemon=True
+            ).start()
     return {"received": True}
 
 @app.get("/api/health")
